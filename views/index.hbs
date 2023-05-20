@@ -1,33 +1,81 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-  <a class="navbar-brand" href="#">
-    <div class="d-flex align-tems-center">
-      <img src="imgs/logo.png" alt="Logo" class="logo mr-1" />
-      IP
+{{> navbar}}
+<header class="bg-white">
+  <div class="banner">
+    <div class="container">
+      <div class="hero-textbox">
+        <h1>One identity for all websites</h1>
+        <p>
+          Internet passport provides Authentication As a Service (AAAS). Which gives you the ability to
+          have one account and use it to login/signup into any website that has our service installed.
+        </p>
+        <a href="/login" class="btn btn-light btn-lg">
+          Create account
+        </a>
+      </div>
     </div>
-  </a>
-  <button
-    class="navbar-toggler"
-    type="button"
-    data-toggle="collapse"
-    data-target="#navbarNav"
-    aria-controls="navbarNav"
-    aria-expanded="false"
-    aria-label="Toggle navigation"
-  >
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home
-          <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
-      </li>
-    </ul>
   </div>
-</nav>
+</header>
+
+<div class="features-section" id="features">
+  <div class="feature-one-identity">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <img src="imgs/one-identity.svg" alt="One Identity">
+        </div>
+        <div class="col-12 col-md-6">
+          <h3>
+            <i class="fa fa-id-card me-1"></i>
+            One Identity
+          </h3>
+          <p>
+            Create just one account with us and your can use same account to either signup or login to any
+            website that have our app installed in their website. This eradicates the need for multiple accounts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-security">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <h3>
+            <i class="fa fa-shield me-1"></i>
+            Secured
+          </h3>
+          <p>
+            We ensure your account is secured as you surf through the internet. This is achieved by adding
+            another in our authentication mechanism.
+          </p>
+        </div>
+        <div class="col-12 col-md-6">
+          <img src="imgs/secured.svg" alt="Secured feature">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-support">
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <img src="imgs/support.svg" alt="Support feature">
+        </div>
+        <div class="col-12 col-md-6">
+          <h3>
+            <i class="fa fa-clock me-1"></i>
+            24/7
+          </h3>
+          <p>
+            In order to serve you better, we provide a 24/7 support to our users.
+            And we make sure your authentication experience is seamless.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{> footer}}

@@ -9,4 +9,22 @@ export default class IndexController {
       },
     });
   }
+
+  getSignupPage(req: Request, res: Response) {
+    res.render("signup", {
+      page: {
+        title: "Signup - Internet Passport",
+        description: "Create one identity for your net surfing",
+      },
+    });
+  }
+
+  getLoginPage(req: Request, res: Response) {
+    res.render("login", {
+      page: {
+        title: "Login - Internet Passport",
+        description: "Login into your Internet Passport",
+      },
+    });
+  }
 }
