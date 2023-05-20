@@ -1,0 +1,11 @@
+body {
+  text-rendering: optimizeLegibility;
+  font-size: 16px;
+  font-family: "Poppins", Verdana, Geneva, Tahoma, sans-serif;
+  background-color: #ececec;
+}
+
+.logo {
+  width: 1.5em;
+  height: 1.5em;
+}
