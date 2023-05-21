@@ -1,0 +1,57 @@
+<div class="wrapper d-flex justify-content-center align-items-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto">
+                <div class="card rounded-card border-0">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <!-- Logo -->
+                            <a href="/" class="link">
+                                <div class="d-flex justify-content-center align-tems-center mb-3 logo-pane">
+                                    <img src="/imgs/logo.png" alt="Logo" class="logo mr-1" />
+                                    IP
+                                </div>
+                            </a>
+                            <!-- Logo -->
+                            <p class="text-muted">Use Internet Passport in your web apps.</p>
+                        </div>
+
+                        <form action="/developer/signup" method="post" class="m-0">
+                            <div class="mb-3">
+                                <input type="text" name="fullname" placeholder="Fullname" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="text" name="company" placeholder="Company Name" class="form-control" />
+                            </div>
+
+                            <div class="mb-3">
+                                <select name="role" class="form-control">
+                                    <option value="">Select your role</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="email" class="form-control" name="email" placeholder="example@email.com">
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="password" class="form-control" name="password" placeholder="Password">
+                            </div>
+
+                            <div class="text-center mb-3">
+                                <button type="submit" class="btn btn-full">
+                                    Create account
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <a href="/developer/login">Already have an account? Login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
