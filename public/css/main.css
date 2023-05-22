@@ -95,6 +95,10 @@ body {
   background-color: #f50057;
   color: #ffffff;
 }
+
+.btn-full:hover {
+  color: #ffffff;
+}
 /* btn */
 
 /* signup-card */
@@ -168,6 +172,16 @@ a.link:hover {
 .bg-transparent {
   background-color: transparent;
 }
+
+.code-digit-pane > input {
+  width: 2em;
+  text-align: center;
+  margin: 0 0.35rem;
+  padding: 0.5rem 0.1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
 @media screen and (max-width: 991px) {
   .banner {
     padding: 5rem;

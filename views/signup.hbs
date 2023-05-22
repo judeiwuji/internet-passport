@@ -19,31 +19,77 @@
                                 <h4>Create your Internet Passport</h4>
                             </div>
                             <!-- Title -->
-
-                            <form action="" method="post" class="mb-0">
+                            {{!-- Error Message --}}
+                            {{#if (equals error.code 'UserCreationFailed')}}
+                            <div class="alert alert-danger">
+                                {{error.message}}
+                            </div>
+                            {{/if}}
+                            {{!-- Error Message --}}
+                            <form action="/signup" method="post" class="mb-0">
+                                <input type="hidden" name="_method" value="POST">
                                 <div class="row mb-4">
                                     <div class="col-12 col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control" name="firstname"
-                                            placeholder="First name" id="firstname">
+                                        <input type="text"
+                                            class="form-control {{#if (equals error.path 'firstname')}}border-danger{{/if}}"
+                                            {{#if (equals error.path 'firstname' )}}data-title="Provide your firstname"
+                                            {{/if}} data-toggle="tooltip" data-tooltip-class="bg-danger"
+                                            name="firstname" placeholder="First name" id="firstname"
+                                            value="{{data.firstname}}">
                                     </div>
                                     <div class="col-12 col-sm-6">
-                                        <input type="text" class="form-control" name="lastname" placeholder="Last name"
-                                            id="lastname">
+                                        <input type="text"
+                                            class="form-control {{#if (equals error.path 'lastname')}}border-danger{{/if}}"
+                                            {{#if (equals error.path 'lastname' )}}data-title="Provide your lastname"
+                                            {{/if}} data-toggle="tooltip" name="lastname" placeholder="Last name"
+                                            id="lastname" value="{{data.lastname}}">
+
                                     </div>
+                                </div>
+                                <div class="mb-4">
+                                    <select name="question"
+                                        class="form-control {{#if (equals error.path 'question')}}border-danger{{/if}}"
+                                        {{#if (equals error.path 'question' )}}data-title="Select a secret question"
+                                        {{/if}} data-toggle="tooltip">
+                                        <option value="">Select secret Question</option>
+                                        {{#each questions as |question|}}
+                                        <option value="{{question}}" {{#if (equals ../data.question question)}}
+                                            selected="true" {{/if}}>
+                                            {{question}}
+                                        </option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <input type="text"
+                                        class="form-control {{#if (equals error.path 'answer')}}border-danger{{/if}}"
+                                        {{#if (equals error.path 'answer' )}}data-title="Provide a secret answer"
+                                        {{/if}} data-toggle="tooltip" placeholder="Secret Answer" name="answer"
+                                        value="{{data.answer}}">
                                 </div>
 
                                 <div class="mb-4">
-                                    <input type="email" class="form-control" placeholder="example@email.com" id="email">
+                                    <input type="email"
+                                        class="form-control {{#if (equals error.path 'email')}}border-danger{{/if}}"
+                                        {{#if (equals error.path 'email' )}}data-title="{{error.message}}" {{/if}}
+                                        data-toggle="tooltip" placeholder="example@email.com" id="email" name="email"
+                                        value="{{data.email}}">
                                 </div>
 
                                 <div class="row mb-5">
                                     <div class="col-12 col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control" name="password"
-                                            placeholder="Password" id="password">
+                                        <input type="password"
+                                            class="form-control {{#if (equals error.path 'password')}}border-danger{{/if}}"
+                                            {{#if (equals error.path 'password' )}}data-title="Provide your password"
+                                            {{/if}} data-toggle="tooltip" name="password" placeholder="Password"
+                                            id="password">
                                     </div>
                                     <div class="col-12 col-sm-6">
-                                        <input type="password" class="form-control" name="confirmPassword"
-                                            placeholder="Confirm" id="confirmPassword">
+                                        <input type="password"
+                                            class="form-control {{#if (equals error.path 'confirmPassword')}}border-danger{{/if}}"
+                                            {{#if (equals error.path 'confirmPassword' )}}data-title="Password mismatch"
+                                            {{/if}} data-toggle="tooltip" name="confirmPassword" placeholder="Confirm"
+                                            id="confirmPassword">
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center flex-wrap">
