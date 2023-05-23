@@ -16,8 +16,8 @@ export const UserUpdateSchema = object({
 });
 
 export const UserSecretUpdateSchema = object({
-  secretQuestion: string().optional(),
-  secretAnswer: string().optional(),
+  question: string().required("Select a secret question"),
+  answer: string().required("Provide your secret answer"),
 });
 
 export const ChangePasswordSchema = object({

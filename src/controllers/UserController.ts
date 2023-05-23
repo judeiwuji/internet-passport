@@ -4,6 +4,7 @@ import secretQuestions from "../data/secretQuestions";
 import validateSchema from "../validators/validatorSchema";
 import {
   ChangePasswordSchema,
+  UserSecretUpdateSchema,
   UserUpdateSchema,
 } from "../validators/schemas/UserSchema";
 import UserService from "../services/UserService";
@@ -68,10 +69,27 @@ export default class UserController {
       );
       data.userId = user?.id as string;
 
-      const updated = await this.auth.changePassword(data);
+      const updated = await this.auth.updateUserPassword(data);
       req.flash(
         updated ? "info" : "error",
         updated ? "Password changed successfully" : "Failed to change password"
+      );
+    } catch (error: any) {
+      req.flash("error", error.message);
+    }
+    res.redirect("/profile");
+  }
+
+  async updateSecret(req: IRequest, res: Response) {
+    const user = req.user;
+    try {
+      const data = await validateSchema(UserSecretUpdateSchema, req.body);
+      data.userId = user?.id as string;
+
+      const updated = await this.userService.updateUserSecret(data);
+      req.flash(
+        updated ? "info" : "error",
+        updated ? "Secret updated successfully" : "Failed to update secret"
       );
     } catch (error: any) {
       req.flash("error", error.message);

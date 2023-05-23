@@ -103,7 +103,7 @@
                 </a>
             </div>
             <div class="modal-body">
-                <form action="" method="post" class="m-0">
+                <form action="/updateSecret" method="post" class="m-0">
                     <div class="mb-4">
                         <select name="question"
                             class="form-control {{#if (equals error.path 'question')}}border-danger{{/if}}" {{#if
@@ -120,8 +120,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <textarea name="secretAnswer" rows="1" class="form-control"
-                            placeholder="Secret Answer"></textarea>
+                        <textarea name="answer" rows="1" class="form-control" placeholder="Secret Answer"></textarea>
                     </div>
 
                     <div class="text-center">

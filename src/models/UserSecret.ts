@@ -11,7 +11,7 @@ import {
 import User from "./User";
 import { DataTypes, Optional } from "sequelize";
 
-interface UserSecretAttributes {
+export interface UserSecretAttributes {
   id: string;
   userId: string;
   question: string;

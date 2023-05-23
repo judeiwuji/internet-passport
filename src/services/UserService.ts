@@ -5,7 +5,10 @@ import {
   UserCreateError,
   UserNotFoundError,
 } from "../models/errors/UserError";
-import UserSecret, { UserSecretCreationAttributes } from "../models/UserSecret";
+import UserSecret, {
+  UserSecretAttributes,
+  UserSecretCreationAttributes,
+} from "../models/UserSecret";
 import DB from "../models/engine/DBStorage";
 
 export default class UserService {
@@ -78,6 +81,20 @@ export default class UserService {
         password: hashedPassword,
       },
       { where: { id } }
+    );
+
+    return affectedRows > 0;
+  }
+
+  async updateUserSecret(data: UserSecretAttributes) {
+    const salt = await genSalt(12);
+    const hashedSecretAnswer = await hash(data.answer, salt);
+    const [affectedRows] = await UserSecret.update(
+      {
+        question: data.question,
+        answer: hashedSecretAnswer,
+      },
+      { where: { userId: data.userId } }
     );
 
     return affectedRows > 0;

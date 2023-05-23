@@ -8,7 +8,7 @@ export default abstract class Auth {
 
   async createAccessToken() {}
 
-  async changePassword(request: IChangePasswordRequest) {
+  async updateUserPassword(request: IChangePasswordRequest) {
     const user = await this.userService.getUserBy({ id: request.userId });
     const isMatch = await compare(request.oldPassword, user.password);
     if (!isMatch) {

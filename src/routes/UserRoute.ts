@@ -12,4 +12,7 @@ userRouter.put("/profile", (req, res) =>
 userRouter.post("/changePassword", (req, res) =>
   userController.changePassword(req, res)
 );
+userRouter.post("/updateSecret", (req, res) =>
+  userController.updateSecret(req, res)
+);
 export default userRouter;
