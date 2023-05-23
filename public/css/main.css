@@ -173,6 +173,7 @@ a.link:hover {
   background-color: transparent;
 }
 
+/* code-digit-pane */
 .code-digit-pane > input {
   width: 2em;
   text-align: center;
@@ -181,7 +182,15 @@ a.link:hover {
   font-size: 1.4rem;
   font-weight: 700;
 }
+/* code-digit-pane */
 
+/* title-text */
+.title-text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #4e4e4e;
+}
+/* title-text */
 @media screen and (max-width: 991px) {
   .banner {
     padding: 5rem;
