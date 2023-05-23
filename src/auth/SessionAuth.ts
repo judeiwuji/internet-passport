@@ -1,3 +1,4 @@
+import Developer from "../models/Developer";
 import Session, { SessionCreationAttributes } from "../models/Session";
 import User from "../models/User";
 import UserSecret from "../models/UserSecret";
@@ -11,7 +12,7 @@ export default class SessionAuth extends Auth {
 
   async findUserBySession(sessionId: string) {
     const session = await Session.findByPk(sessionId, {
-      include: [{ model: User, include: [UserSecret] }],
+      include: [{ model: User, include: [UserSecret, Developer] }],
     });
 
     if (!session) {

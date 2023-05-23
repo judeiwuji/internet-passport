@@ -16,27 +16,72 @@
                             <p class="text-muted">Use Internet Passport in your web apps.</p>
                         </div>
 
+                        {{#if (equals error.code 'DeveloperCreate')}}
+                        <div class="alert alert-danger">
+                            {{error.message}}
+                        </div>
+                        {{/if}}
+
                         <form action="/developer/signup" method="post" class="m-0">
-                            <div class="mb-3">
-                                <input type="text" name="fullname" placeholder="Fullname" class="form-control" />
+                            <div class="row mb-4">
+                                <div class="col-12 col-sm-6 mb-3 mb-sm-0">
+                                    <input type="text"
+                                        class="form-control {{#if (equals error.path 'firstname')}}border-danger{{/if}}"
+                                        {{#if (equals error.path 'firstname' )}} data-title="{{error.message}}" {{/if}}
+                                        data-toggle="tooltip" name="firstname" placeholder="First name" id="firstname"
+                                        value="{{data.firstname}}">
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <input type="text"
+                                        class="form-control {{#if (equals error.path 'lastname')}}border-danger{{/if}}"
+                                        {{#if (equals error.path 'lastname' )}} data-title="{{error.message}}" {{/if}}
+                                        data-toggle="tooltip" name="lastname" placeholder="Last name" id="lastname"
+                                        value="{{data.lastname}}">
+
+                                </div>
                             </div>
 
                             <div class="mb-3">
-                                <input type="text" name="company" placeholder="Company Name" class="form-control" />
+                                <input type="text" name="company" placeholder="Company Name"
+                                    class="form-control {{#if (equals error.path 'company')}}border-danger{{/if}}" {{#if
+                                    (equals error.path 'company' )}} data-title="{{error.message}}" {{/if}}
+                                    data-toggle="tooltip" value="{{data.company}}" />
                             </div>
 
                             <div class="mb-3">
-                                <select name="role" class="form-control">
+                                <select name="role"
+                                    class="form-control {{#if (equals error.path 'role')}}border-danger{{/if}}" {{#if
+                                    (equals error.path 'role' )}} data-title="{{error.message}}" {{/if}}
+                                    data-toggle="tooltip" name="role">
                                     <option value="">Select your role</option>
+                                    {{#each roles as |role|}}
+                                    <option value="{{role}}" {{#if (equals ../data.role role)}} selected="true" {{/if}}>
+                                        {{role}}
+                                    </option>
+                                    {{/each}}
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <input type="email" class="form-control" name="email" placeholder="example@email.com">
+                                <input type="email"
+                                    class="form-control {{#if (equals error.path 'email')}}border-danger{{/if}}" {{#if
+                                    (equals error.path 'email' )}} data-title="{{error.message}}" {{/if}}
+                                    data-toggle="tooltip" name="email" placeholder="example@email.com"
+                                    value="{{data.email}}">
                             </div>
 
                             <div class="mb-3">
-                                <input type="password" class="form-control" name="password" placeholder="Password">
+                                <input type="password"
+                                    class="form-control {{#if (equals error.path 'password')}}border-danger{{/if}}"
+                                    {{#if (equals error.path 'password' )}} data-title="{{error.message}}" {{/if}}
+                                    data-toggle="tooltip" name="password" placeholder="Password">
+                            </div>
+
+                            <div class="mb-3">
+                                <input type="password"
+                                    class="form-control {{#if (equals error.path 'confirmPassword')}}border-danger{{/if}}"
+                                    {{#if (equals error.path 'confirmPassword' )}} data-title="{{error.message}}"
+                                    {{/if}} data-toggle="tooltip" name="confirmPassword" placeholder="Confirm Password">
                             </div>
 
                             <div class="text-center mb-3">

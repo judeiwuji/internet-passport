@@ -8,21 +8,21 @@ export default class NodemailerUtils {
 
   constructor() {
     this.smtp = createTransport({
-      host: "smtp.ethereal.email",
-      secure: true,
-      port: 587,
+      service: "aol",
+      port: 25,
+      secure: false,
       auth: {
         user: process.env["MAIL_USER"],
         pass: process.env["MAIL_PASS"],
       },
       tls: {
         rejectUnauthorized: false,
-        timeout: 0,
       },
     });
   }
 
   async send(options: Mail.Options) {
+    console.log(process.env["MAIL_USER"]);
     options.from = `${process.env["MAIL_USER"]}`;
 
     return this.smtp.sendMail(options);

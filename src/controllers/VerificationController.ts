@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import VerificationService from "../services/VerificationService";
 import JWTUtil from "../utils/JWTUtils";
 import UserService from "../services/UserService";
+import SessionAuth from "../auth/SessionAuth";
 
 export default class VerificationController {
   private verificationService = new VerificationService();
   private userService = new UserService();
+  private auth = new SessionAuth();
 
   getVerifyEmailPage(req: Request, res: Response) {
     const state = req.query.state as string;
@@ -28,7 +30,40 @@ export default class VerificationController {
       path: req.path,
       isStateValid,
       data: jwtData ? jwtData.payload : {},
+      state,
     });
+  }
+
+  async verifyEmail(req: Request, res: Response) {
+    console.log(req.body);
+
+    try {
+      const code = parseInt(req.body["code[]"].join(""));
+      const jwtData = JWTUtil.verify({ token: req.body.state });
+      console.log(jwtData);
+      // compare code
+      if (code === jwtData.payload["code"]) {
+        req.flash("info", "Account verified");
+        const user = await this.userService.getUserBy({
+          email: jwtData.payload.email,
+        });
+        const session = await this.auth.createSession({
+          userAgent: req.headers["user-agent"] as string,
+          userId: user.id,
+        });
+        res.cookie("session", session.id);
+        user.developer
+          ? res.redirect("/developer/dashboard")
+          : res.redirect("/dashboard");
+      } else {
+        req.flash("error", "Invalid verification code");
+        res.redirect(`/verifyEmail?state=${req.body.state}`);
+      }
+    } catch (error: any) {
+      console.log(error);
+      req.flash("error", error.message);
+      res.redirect(`/verifyEmail?state=${req.body.state}`);
+    }
   }
 
   async resendVerificationCode(req: Request, res: Response) {
@@ -42,10 +77,10 @@ export default class VerificationController {
       const user = await this.userService.getUserBy({ email });
       this.verificationService
         .sendCode(user)
-        .then((info) => {
-          console.log(info);
+        .then((code) => {
+          console.log(code);
           const token = JWTUtil.sign({
-            payload: { email: user.email, codeSent: true },
+            payload: { email: user.email, codeSent: true, code },
             expiresIn: "10m",
           });
           res.redirect(`/verifyEmail?state=${token}`);

@@ -3,11 +3,11 @@ import NodemailerUtils from "../utils/NodemailerUtils";
 import crypto from "crypto";
 
 export default class VerificationService {
-  sendCode(user: User) {
+  async sendCode(user: User) {
     const verificationCode = crypto.randomInt(0, 1000000);
     const mailer = new NodemailerUtils();
 
-    return mailer.send({
+    const info = await mailer.send({
       html: `
     <p>Hi <strong>${user.firstname}</strong>, your verification code is:</p>
     <h1 style="text-align: center">${verificationCode}</h1>
@@ -20,5 +20,6 @@ export default class VerificationService {
       to: user.email,
       subject: "Internet Passport Verification Code",
     });
+    return verificationCode;
   }
 }

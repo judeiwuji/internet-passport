@@ -9,6 +9,7 @@ import {
   HasOne,
 } from "sequelize-typescript";
 import UserSecret from "./UserSecret";
+import Developer from "./Developer";
 
 export interface UserAttributes {
   id: string;
@@ -18,6 +19,7 @@ export interface UserAttributes {
   password: string;
   verified: boolean;
   secret: UserSecret;
+  developer?: Developer;
 }
 
 export interface UserCreationAttributes
@@ -50,4 +52,7 @@ export default class User extends Model<
 
   @HasOne(() => UserSecret)
   secret!: UserSecret;
+
+  @HasOne(() => Developer)
+  developer!: Developer;
 }

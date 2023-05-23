@@ -10,6 +10,7 @@ import UserSecret, {
   UserSecretCreationAttributes,
 } from "../models/UserSecret";
 import DB from "../models/engine/DBStorage";
+import Developer from "../models/Developer";
 
 export default class UserService {
   async createUser(
@@ -53,7 +54,10 @@ export default class UserService {
   }
 
   async getUserBy(query: any) {
-    const user = await User.findOne({ where: query });
+    const user = await User.findOne({
+      where: query,
+      include: [Developer, UserSecret],
+    });
     if (user === null) {
       throw new UserNotFoundError("No user found");
     }

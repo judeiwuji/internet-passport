@@ -17,7 +17,11 @@ export default class JWTUtil {
     return sign(options.payload, secret, config);
   }
 
-  static verify(options: { token: string; secret?: string; issuer?: string }) {
+  static verify(options: {
+    token: string;
+    secret?: string;
+    issuer?: string;
+  }): any {
     const secret = (options.secret || process.env.JWT_SECRET) as string;
     const issuer = options.issuer || process.env.JWT_ISSUER;
 

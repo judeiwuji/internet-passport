@@ -93,3 +93,5 @@ function run() {
 if (require.main === module) {
   run();
 }
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";

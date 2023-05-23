@@ -9,4 +9,5 @@ authRouter.post("/changePassword", (req, res) =>
 );
 
 authRouter.post("/logout", (req, res) => authController.logout(req, res));
+authRouter.post("/login", (req, res) => authController.login(req, res));
 export default authRouter;

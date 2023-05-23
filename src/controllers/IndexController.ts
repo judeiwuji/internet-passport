@@ -91,69 +91,11 @@ export default class IndexController {
     }
   }
 
-  getDeveloperSignupPage(req: Request, res: Response) {
-    res.render("developer/signup", {
-      page: {
-        title: "Developer Signup - Internet Passport",
-        description:
-          "Start integrating Internet Passsport into your applications",
-      },
-      path: req.path,
-    });
-  }
-
   getLoginPage(req: Request, res: Response) {
     res.render("login", {
       page: {
         title: "Login - Internet Passport",
         description: "Login into your Internet Passport",
-      },
-      path: req.path,
-    });
-  }
-
-  async userLogin(req: Request, res: Response) {
-    try {
-      const data = await validateSchema(LoginSchema, req.body);
-      const user = await this.userService.getUserBy({ email: data.email });
-      const isMatch = await compare(data.password, user.password);
-      if (!isMatch) {
-        throw new Error("Wrong email and password combination");
-      }
-
-      // if (req.query.clientId) {
-      //   // create accessToken and redirect to client
-      // }
-
-      const session = await this.sessionAuth.createSession({
-        userAgent: req.headers["user-agent"] as string,
-        userId: user.id,
-      });
-      res.cookie("session", session.id, {
-        sameSite: true,
-        secure: true,
-        maxAge: 2.628e9,
-      });
-      res.redirect("/dashboard");
-    } catch (error: any) {
-      res.render("login", {
-        page: {
-          title: "Login - Internet Passport",
-          description: "Login into your Internet Passport",
-        },
-        path: req.path,
-        error: error.message,
-        data: req.body,
-      });
-    }
-  }
-
-  getDeveloperLoginPage(req: Request, res: Response) {
-    res.render("developer/login", {
-      page: {
-        title: "Developer Login - Internet Passport",
-        description:
-          "Login into your Internet Passport and start managing apps",
       },
       path: req.path,
     });

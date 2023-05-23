@@ -6,19 +6,21 @@ import {
   PrimaryKey,
   Table,
   Model,
+  ForeignKey,
+  BelongsTo,
 } from "sequelize-typescript";
+import User from "./User";
 
 export interface DeveloperAttributes {
   id: string;
-  fullname: string;
   company: string;
   role: string;
-  email: string;
-  password: string;
+  userId: string;
+  user: User;
 }
 
 export interface DeveloperCreationAttributes
-  extends Optional<DeveloperAttributes, "id"> {}
+  extends Optional<DeveloperAttributes, "id" | "user"> {}
 
 @Table
 export default class Developer extends Model<
@@ -30,18 +32,16 @@ export default class Developer extends Model<
   @Column({ defaultValue: DataTypes.UUIDV4 })
   id!: string;
 
-  @Column({ type: DataType.STRING(60) })
-  fullname!: string;
-
   @Column({ type: DataType.STRING(250) })
   company!: string;
 
   @Column({ type: DataType.STRING(150) })
   role!: string;
 
-  @Column({ type: DataType.STRING(60) })
-  email!: string;
+  @ForeignKey(() => User)
+  @Column
+  userId!: string;
 
-  @Column({ type: DataType.CHAR(60) })
-  password!: string;
+  @BelongsTo(() => User)
+  user!: User;
 }
