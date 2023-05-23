@@ -58,6 +58,7 @@ class App {
       session({
         secret: process.env["SESSION_SECRET"] as string,
         saveUninitialized: true,
+        resave: false,
         cookie: {
           maxAge: 1000 * 60 * 60 * 24,
         },

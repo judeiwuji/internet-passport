@@ -8,9 +8,15 @@
           Internet passport provides Authentication As a Service (AAAS). Which gives you the ability to
           have one account and use it to login/signup into any website that has our service installed.
         </p>
+        {{#if isLoggedIn}}
+        <a href="/dashboard" class="btn btn-light btn-lg">
+          Dashboard
+        </a>
+        {{else}}
         <a href="/login" class="btn btn-light btn-lg">
           Create account
         </a>
+        {{/if}}
       </div>
     </div>
   </div>

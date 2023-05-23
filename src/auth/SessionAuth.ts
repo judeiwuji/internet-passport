@@ -19,4 +19,16 @@ export default class SessionAuth extends Auth {
     }
     return session.user;
   }
+
+  async logout(sessionId: string) {
+    const session = await Session.findByPk(sessionId, {
+      include: [{ model: User, include: [UserSecret] }],
+    });
+
+    if (!session) {
+      throw new SessionNotFoundError("Not found");
+    }
+
+    await session.destroy();
+  }
 }
