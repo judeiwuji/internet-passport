@@ -6,4 +6,7 @@ const userController = new UserController();
 
 userRouter.get("/dashboard", userController.getDashboard);
 userRouter.get("/profile", userController.getProfile);
+userRouter.put("/profile", (req, res) =>
+  userController.updateProfile(req, res)
+);
 export default userRouter;

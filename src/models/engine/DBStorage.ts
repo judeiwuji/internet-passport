@@ -7,6 +7,7 @@ import ClientApp from "../ClientApp";
 import UserApp from "../UserApp";
 import UserDevice from "../UserDevice";
 import UserSecret from "../UserSecret";
+import Session from "../Session";
 dotenv.config();
 
 const DB = new Sequelize({
@@ -24,7 +25,15 @@ const DB = new Sequelize({
   },
   //   logging: false,
   timezone: "+01:00",
-  models: [User, Developer, ClientApp, UserApp, UserDevice, UserSecret],
+  models: [
+    User,
+    Developer,
+    ClientApp,
+    UserApp,
+    UserDevice,
+    UserSecret,
+    Session,
+  ],
 });
 
 export default DB;

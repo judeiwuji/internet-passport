@@ -8,6 +8,7 @@ indexRouter.get("/", indexController.getHomePage);
 indexRouter.get("/signup", indexController.getSignupPage);
 indexRouter.post("/signup", (req, res) => indexController.userSignup(req, res));
 indexRouter.get("/login", indexController.getLoginPage);
+indexRouter.post("/login", (req, res) => indexController.userLogin(req, res));
 indexRouter.get("/developer/signup", indexController.getDeveloperSignupPage);
 indexRouter.get("/developer/login", indexController.getDeveloperLoginPage);
 export default indexRouter;

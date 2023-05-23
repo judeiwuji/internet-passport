@@ -6,7 +6,9 @@ import {
   Model,
   IsUUID,
   PrimaryKey,
+  HasOne,
 } from "sequelize-typescript";
+import UserSecret from "./UserSecret";
 
 export interface UserAttributes {
   id: string;
@@ -15,10 +17,11 @@ export interface UserAttributes {
   email: string;
   password: string;
   verified: boolean;
+  secret: UserSecret;
 }
 
 export interface UserCreationAttributes
-  extends Optional<UserAttributes, "id" | "verified"> {}
+  extends Optional<UserAttributes, "id" | "verified" | "secret"> {}
 
 @Table
 export default class User extends Model<
@@ -44,4 +47,7 @@ export default class User extends Model<
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   verified!: boolean;
+
+  @HasOne(() => UserSecret)
+  secret!: UserSecret;
 }

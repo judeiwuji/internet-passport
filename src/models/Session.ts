@@ -4,12 +4,28 @@ import {
   DataType,
   ForeignKey,
   IsUUID,
+  Model,
   PrimaryKey,
+  Table,
 } from "sequelize-typescript";
 import User from "./User";
-import { DataTypes } from "sequelize";
+import { DataTypes, Optional } from "sequelize";
 
-export default class Session {
+export interface SessionAttributes {
+  id: string;
+  userId: string;
+  userAgent: string;
+  user: User;
+}
+
+export interface SessionCreationAttributes
+  extends Optional<SessionAttributes, "id" | "user"> {}
+
+@Table
+export default class Session extends Model<
+  SessionAttributes,
+  SessionCreationAttributes
+> {
   @IsUUID(4)
   @PrimaryKey
   @Column({ defaultValue: DataTypes.UUIDV4 })

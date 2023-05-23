@@ -13,7 +13,6 @@ export const UserCreationSchema = object({
 export const UserUpdateSchema = object({
   firstname: string().optional(),
   lastname: string().optional(),
-  id: string().required(),
 });
 
 export const UserSecretUpdateSchema = object({

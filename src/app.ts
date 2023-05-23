@@ -1,5 +1,6 @@
 import path from "path";
 import express, { Application, Request, Response } from "express";
+import cookieParser from "cookie-parser";
 import { engine } from "express-handlebars";
 import morgan from "morgan";
 import * as dotenv from "dotenv";
@@ -7,6 +8,9 @@ import RouteManager from "./routes/RouteManager";
 import DB from "./models/engine/DBStorage";
 import userAgent from "express-useragent";
 import methodOverride from "method-override";
+import deserializeUser from "./middlewares/deserializeUser";
+import session from "express-session";
+import flash from "connect-flash";
 dotenv.config();
 
 class App {
@@ -49,6 +53,25 @@ class App {
         }
       })
     );
+    this.app.use(cookieParser(process.env["COOKIE_SECRET"]));
+    this.app.use(
+      session({
+        secret: process.env["SESSION_SECRET"] as string,
+        saveUninitialized: true,
+        cookie: {
+          maxAge: 1000 * 60 * 60 * 24,
+        },
+      })
+    );
+    this.app.use(flash());
+    this.app.use(deserializeUser);
+    // App local variables
+    this.app.use((req, res, next) => {
+      res.locals.info = req.flash("info");
+      res.locals.error = req.flash("error");
+
+      next();
+    });
   }
 
   settings() {
