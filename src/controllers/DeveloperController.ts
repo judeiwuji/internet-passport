@@ -6,12 +6,21 @@ import VerificationService from "../services/VerificationService";
 import JWTUtil from "../utils/JWTUtils";
 import developerRoles from "../data/developerRoles";
 import IRequest from "../models/interfaces/IRequest";
+import ClientAppService from "../services/ClientAppService";
+import Developer from "../models/Developer";
 
 export default class DeveloperController {
   private verificationService = new VerificationService();
   private developerService = new DeveloperService();
+  private clientAppService = new ClientAppService();
 
-  getDashboard(req: IRequest, res: Response) {
+  async getDashboard(req: IRequest, res: Response) {
+    const { page } = req.query;
+
+    const apps = await this.clientAppService.getApps(
+      Number(page || 1),
+      req.user?.developer as Developer
+    );
     res.render("developer/dashboard", {
       page: {
         title: "Dashboard - Internet Passport",
@@ -20,6 +29,8 @@ export default class DeveloperController {
       path: req.path,
       isLoggedIn: !!req.user,
       isDeveloper: req.user && req.user.developer,
+      apps,
+      tab: req.query.tab,
     });
   }
 
@@ -28,18 +39,6 @@ export default class DeveloperController {
       page: {
         title: "Profile - Internet Passport",
         description: "Edit your account profile",
-      },
-      path: req.path,
-      isLoggedIn: !!req.user,
-      isDeveloper: req.user && req.user.developer,
-    });
-  }
-
-  getApplicationDetails(req: IRequest, res: Response) {
-    res.render("developer/applicationDetails", {
-      page: {
-        title: "Applications - Internet Passport",
-        description: "manage application",
       },
       path: req.path,
       isLoggedIn: !!req.user,

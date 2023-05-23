@@ -11,6 +11,7 @@ import methodOverride from "method-override";
 import deserializeUser from "./middlewares/deserializeUser";
 import session from "express-session";
 import flash from "connect-flash";
+const dateFormat = require("handlebars-dateformat");
 dotenv.config();
 
 class App {
@@ -33,6 +34,7 @@ class App {
           equals: function (a: any, b: any) {
             return a === b;
           },
+          dateFormat: dateFormat,
         },
       })
     );

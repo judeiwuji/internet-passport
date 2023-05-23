@@ -1,9 +1,10 @@
 import { Application } from "express";
-import indexRouter from "./IndexRoute";
-import userRouter from "./UserRoute";
-import developerRouter from "./DeveloperRoute";
-import verificationRouter from "./VerificationRoute";
-import authRouter from "./AuthRoute";
+import indexRoute from "./IndexRoute";
+import userRoute from "./UserRoute";
+import developerRoute from "./DeveloperRoute";
+import verificationRoute from "./VerificationRoute";
+import authRoute from "./AuthRoute";
+import clientAppRoute from "./ClientAppRoute";
 
 export default class RouteManager {
   constructor(private app: Application) {
@@ -11,10 +12,11 @@ export default class RouteManager {
   }
 
   register() {
-    this.app.use("", indexRouter);
-    this.app.use("", userRouter);
-    this.app.use("/developer", developerRouter);
-    this.app.use("", verificationRouter);
-    this.app.use("", authRouter);
+    this.app.use("", indexRoute);
+    this.app.use("", userRoute);
+    this.app.use("/developer", developerRoute);
+    this.app.use("", verificationRoute);
+    this.app.use("", authRoute);
+    this.app.use("/client", clientAppRoute);
   }
 }

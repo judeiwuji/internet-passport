@@ -22,7 +22,7 @@ export interface ClientAppAttributes {
 }
 
 export interface ClientAppCreationAttributes
-  extends Optional<ClientAppAttributes, "id" | "developer"> {}
+  extends Optional<ClientAppAttributes, "id" | "secret" | "developer"> {}
 
 @Table
 export default class ClientApp extends Model<

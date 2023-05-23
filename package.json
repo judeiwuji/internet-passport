@@ -25,6 +25,7 @@
     "express-handlebars": "^7.0.7",
     "express-session": "^1.17.3",
     "express-useragent": "^1.0.15",
+    "handlebars-dateformat": "^1.1.3",
     "jsonwebtoken": "^9.0.0",
     "method-override": "^3.0.0",
     "morgan": "^1.10.0",
