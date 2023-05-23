@@ -2,11 +2,17 @@ import { Request, Response } from "express";
 import IRequest from "../models/interfaces/IRequest";
 import secretQuestions from "../data/secretQuestions";
 import validateSchema from "../validators/validatorSchema";
-import { UserUpdateSchema } from "../validators/schemas/UserSchema";
+import {
+  ChangePasswordSchema,
+  UserUpdateSchema,
+} from "../validators/schemas/UserSchema";
 import UserService from "../services/UserService";
+import IChangePasswordRequest from "../models/interfaces/IChangePasswordRequest";
+import SessionAuth from "../auth/SessionAuth";
 
 export default class UserController {
   private userService = new UserService();
+  private auth = new SessionAuth();
 
   getDashboard(req: IRequest, res: Response) {
     res.render("user/dashboard", {
@@ -47,10 +53,29 @@ export default class UserController {
         updated ? "info" : "error",
         updated ? "Account updated successfully" : "Failed to update"
       );
-      res.redirect("/profile");
     } catch (error: any) {
       req.flash("error", error.message);
-      res.redirect("/profile?updated=0");
     }
+    res.redirect("/profile");
+  }
+
+  async changePassword(req: IRequest, res: Response) {
+    const user = req.user;
+    try {
+      const data: IChangePasswordRequest = await validateSchema(
+        ChangePasswordSchema,
+        req.body
+      );
+      data.userId = user?.id as string;
+
+      const updated = await this.auth.changePassword(data);
+      req.flash(
+        updated ? "info" : "error",
+        updated ? "Password changed successfully" : "Failed to change password"
+      );
+    } catch (error: any) {
+      req.flash("error", error.message);
+    }
+    res.redirect("/profile");
   }
 }

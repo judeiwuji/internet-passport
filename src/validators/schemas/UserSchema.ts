@@ -19,3 +19,9 @@ export const UserSecretUpdateSchema = object({
   secretQuestion: string().optional(),
   secretAnswer: string().optional(),
 });
+
+export const ChangePasswordSchema = object({
+  confirmPassword: string().oneOf([ref("newPassword")], "Password mismatch"),
+  newPassword: string().required("Provide your new password"),
+  oldPassword: string().required("Provide your old password"),
+});

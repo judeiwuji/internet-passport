@@ -72,6 +72,17 @@ export default class UserService {
     return affectedRows > 0;
   }
 
+  async changePassword(hashedPassword: string, id: string) {
+    const [affectedRows] = await User.update(
+      {
+        password: hashedPassword,
+      },
+      { where: { id } }
+    );
+
+    return affectedRows > 0;
+  }
+
   async deleteUser(id: string) {
     if ((await User.findByPk(id)) === null) {
       throw new UserNotFoundError("No user found");

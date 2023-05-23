@@ -1,0 +1,7 @@
+import BaseError from "./BaseError";
+
+export class PasswordNotMatchError extends BaseError {
+  constructor(message: string) {
+    super("PasswordNotMatch", message);
+  }
+}
