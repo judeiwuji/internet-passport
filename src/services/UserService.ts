@@ -11,6 +11,9 @@ import UserSecret, {
 } from "../models/UserSecret";
 import DB from "../models/engine/DBStorage";
 import Developer from "../models/Developer";
+import UserApp from "../models/UserApp";
+import UserDevice from "../models/UserDevice";
+import DeviceDetector from "node-device-detector";
 
 export default class UserService {
   async createUser(
@@ -53,7 +56,7 @@ export default class UserService {
     }
   }
 
-  async getUserBy(query: any) {
+  async findUserBy(query: any) {
     const user = await User.findOne({
       where: query,
       include: [Developer, UserSecret],
@@ -111,5 +114,24 @@ export default class UserService {
     const result = await User.destroy({ where: { id } });
 
     return result > 0;
+  }
+
+  async getDevices(userId: string) {
+    const detector = new DeviceDetector();
+
+    const devices = await UserDevice.findAll({ where: { userId } });
+    return devices.map((d) => {
+      const data = detector.detect(d.userAgent);
+      console.log(data);
+      return {
+        ...d.toJSON(),
+        data,
+      };
+    });
+  }
+
+  async getApps(userId: string) {
+    const apps = await UserApp.findAll({ where: { userId } });
+    return apps.map((d) => d.toJSON());
   }
 }

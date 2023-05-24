@@ -8,15 +8,17 @@ import {
   UserUpdateSchema,
 } from "../validators/schemas/UserSchema";
 import UserService from "../services/UserService";
-import SessionAuth from "../auth/SessionAuth";
+import UserApp from "../models/UserApp";
 
 export default class UserController {
   private userService = new UserService();
 
-  getDashboard(req: IRequest, res: Response) {
+  async getDashboard(req: IRequest, res: Response) {
     if (req.user && req.user.developer) {
       res.redirect("/developer/dashboard");
     }
+    const apps = await this.userService.getApps(req.user?.id as string);
+    const devices = await this.userService.getDevices(req.user?.id as string);
     res.render("user/dashboard", {
       page: {
         title: "Dashboard - Internet Passport",
@@ -24,7 +26,9 @@ export default class UserController {
       },
       path: req.path,
       isLoggedIn: !!req.user,
-      isDeveloper: false,
+      isDeveloper: !!req.user?.developer,
+      devices,
+      apps,
     });
   }
 

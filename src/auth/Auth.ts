@@ -21,7 +21,7 @@ export default abstract class Auth {
   }
 
   async updateUserPassword(request: IChangePasswordRequest) {
-    const user = await this.userService.getUserBy({ id: request.userId });
+    const user = await this.userService.findUserBy({ id: request.userId });
     const isMatch = await compare(request.oldPassword, user.password);
     if (!isMatch) {
       throw new PasswordNotMatchError(

@@ -35,6 +35,11 @@ class App {
             return a === b;
           },
           dateFormat: dateFormat,
+          math: function (lvalue: string, operator: string, rvalue: string) {
+            return {
+              "+": parseFloat(lvalue) + parseFloat(rvalue),
+            }[operator];
+          },
         },
       })
     );

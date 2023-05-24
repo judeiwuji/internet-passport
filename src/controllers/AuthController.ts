@@ -58,19 +58,12 @@ export default class AuthController {
   async login(req: Request, res: Response) {
     try {
       const data = await validateSchema(LoginSchema, req.body);
-      const user = await this.userService.getUserBy({ email: data.email });
+      const user = await this.userService.findUserBy({ email: data.email });
       const isMatch = await compare(data.password, user.password);
       // const isDeveloper = req.path === "/developer/login";
       if (!isMatch) {
         throw new Error("Wrong email and password combination");
       }
-
-      // if (
-      //   (!user.developer && isDeveloper) ||
-      //   (user.developer && !isDeveloper)
-      // ) {
-      //   throw new Error("Wrong credentials");
-      // }
 
       if (!user.developer) {
         const canCompleteMFA = await this.auth.requireMFA(

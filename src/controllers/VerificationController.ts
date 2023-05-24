@@ -44,7 +44,7 @@ export default class VerificationController {
       // compare code
       if (code === jwtData.payload["code"]) {
         req.flash("info", "Account verified");
-        const user = await this.userService.getUserBy({
+        const user = await this.userService.findUserBy({
           email: jwtData.payload.email,
         });
         const session = await this.auth.createSession({
@@ -74,7 +74,7 @@ export default class VerificationController {
     }
 
     try {
-      const user = await this.userService.getUserBy({ email });
+      const user = await this.userService.findUserBy({ email });
       this.verificationService
         .sendCode(user)
         .then((code) => {
