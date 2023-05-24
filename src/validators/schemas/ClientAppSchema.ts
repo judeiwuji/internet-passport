@@ -5,8 +5,6 @@ export const ClientAppCreationSchema = object({
   name: string().required("Provide app name"),
 });
 
-export const ClientAppUpdatechema = object({
+export const ClientAppUpdateSchema = object({
   redirectURL: string().optional(),
-  name: string().optional(),
-  id: string().required("Missing App id"),
 });

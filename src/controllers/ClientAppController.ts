@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import validateSchema from "../validators/validatorSchema";
-import { ClientAppCreationSchema } from "../validators/schemas/ClientAppSchema";
+import {
+  ClientAppCreationSchema,
+  ClientAppUpdateSchema,
+} from "../validators/schemas/ClientAppSchema";
 import ClientAppService from "../services/ClientAppService";
 import IRequest from "../models/interfaces/IRequest";
 import Developer from "../models/Developer";
@@ -45,8 +48,8 @@ export default class ClientAppController {
 
     res.render("developer/applicationDetails", {
       page: {
-        title: "Applications - Internet Passport",
-        description: "manage application",
+        title: `${app.name} - Internet Passport`,
+        description: `manage ${app.name}`,
       },
       path: req.path,
       isLoggedIn: !!req.user,
@@ -56,7 +59,35 @@ export default class ClientAppController {
     });
   }
 
-  async updateApp(req: Request, res: Response) {}
+  async updateApp(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      console.log(req.body);
+      const data = await validateSchema(ClientAppUpdateSchema, req.body);
+      const updated = await this.clientAppService.updateApp(data, id);
+      req.flash(
+        updated ? "info" : "error",
+        updated ? "App updated" : "Failed to update"
+      );
+      res.redirect(`/client/apps/${id}`);
+    } catch (error: any) {
+      req.flash("error", error.message);
+      res.redirect(`/client/apps/${id}`);
+    }
+  }
 
-  async deleteApp(req: Request, res: Response) {}
+  async deleteApp(req: IRequest, res: Response) {
+    const { id } = req.params;
+    try {
+      await this.clientAppService.deleteApp(
+        id,
+        req.user?.developer as Developer
+      );
+      req.flash("info", "App deleted");
+      res.redirect(`/developer/dashboard`);
+    } catch (error: any) {
+      req.flash("error", error.message);
+      res.redirect(`/client/apps/${id}`);
+    }
+  }
 }

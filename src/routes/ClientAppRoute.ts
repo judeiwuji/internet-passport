@@ -16,4 +16,12 @@ clientAppRoute.get("/apps/:id", (req, res) =>
   clientAppController.getApp(req, res)
 );
 
+clientAppRoute.put("/apps/:id", (req, res) =>
+  clientAppController.updateApp(req, res)
+);
+
+clientAppRoute.delete("/apps/:id", (req, res) =>
+  clientAppController.deleteApp(req, res)
+);
+
 export default clientAppRoute;

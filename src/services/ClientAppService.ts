@@ -29,12 +29,12 @@ export default class ClientAppService {
     }
   }
 
-  async updateApp(data: ClientAppAttributes) {
+  async updateApp(data: ClientAppAttributes, id: string) {
     const [affectedCount] = await ClientApp.update(
       {
         redirectURL: data.redirectURL,
       },
-      { where: { id: data.id } }
+      { where: { id } }
     );
     return affectedCount > 0;
   }
