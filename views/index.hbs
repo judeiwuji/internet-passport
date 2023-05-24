@@ -9,7 +9,7 @@
           have one account and use it to login/signup into any website that has our service installed.
         </p>
         {{#if isLoggedIn}}
-        <a href="/dashboard" class="btn btn-light btn-lg">
+        <a href="{{#if isDeveloper}}/developer/dashboard{{else}}/dashboard{{/if}}" class="btn btn-light btn-lg">
           Dashboard
         </a>
         {{else}}

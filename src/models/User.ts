@@ -20,10 +20,15 @@ export interface UserAttributes {
   verified: boolean;
   secret: UserSecret;
   developer?: Developer;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UserCreationAttributes
-  extends Optional<UserAttributes, "id" | "verified" | "secret"> {}
+  extends Optional<
+    UserAttributes,
+    "id" | "verified" | "secret" | "createdAt" | "updatedAt"
+  > {}
 
 @Table
 export default class User extends Model<

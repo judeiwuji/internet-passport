@@ -19,17 +19,8 @@ const detector = new DeviceDetector({
 export default class IndexController {
   private userService = new UserService();
   private verificationService = new VerificationService();
-  private sessionAuth = new SessionAuth();
 
   getHomePage(req: IRequest, res: Response) {
-    // console.log(detector.detect(req.headers["user-agent"] as string));
-    // console.log(req.useragent);
-    // console.log(req.user);
-    // console.log(
-    //   JWTUtil.sign({
-    //     payload: { email: "judeiwuji@gmail.com", codeSent: false },
-    //   })
-    // );
     res.render("index", {
       page: {
         title: "Internet Passport",
@@ -37,7 +28,7 @@ export default class IndexController {
       },
       path: req.path,
       isLoggedIn: !!req.user,
-      isDeveloper: false,
+      isDeveloper: !!req.user?.developer,
     });
   }
 

@@ -14,6 +14,9 @@ export default class UserController {
   private userService = new UserService();
 
   getDashboard(req: IRequest, res: Response) {
+    if (req.user && req.user.developer) {
+      res.redirect("/developer/dashboard");
+    }
     res.render("user/dashboard", {
       page: {
         title: "Dashboard - Internet Passport",

@@ -16,10 +16,15 @@ interface UserDeviceAttributes {
   userId: string;
   userAgent: string;
   user: User;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface UserDeviceCreationAttributes
-  extends Optional<UserDeviceAttributes, "id" | "userId"> {}
+  extends Optional<
+    UserDeviceAttributes,
+    "id" | "user" | "createdAt" | "updatedAt"
+  > {}
 
 @Table
 export default class UserDevice extends Model<

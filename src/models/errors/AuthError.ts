@@ -5,3 +5,9 @@ export class PasswordNotMatchError extends BaseError {
     super("PasswordNotMatch", message);
   }
 }
+
+export class UnknownUserError extends BaseError {
+  constructor(message: string) {
+    super("EUNKNOWNUSER", message);
+  }
+}
