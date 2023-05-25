@@ -19,6 +19,8 @@ import UserApp from "../models/UserApp";
 import ClientApp from "../models/ClientApp";
 import UserDevice from "../models/UserDevice";
 import ClientAppService from "../services/ClientAppService";
+import NodemailerUtils from "../utils/NodemailerUtils";
+import moment from "moment";
 
 export default class AuthController {
   private auth = new SessionAuth();
@@ -47,6 +49,43 @@ export default class AuthController {
       data.userId = user?.id as string;
 
       const updated = await this.auth.updateUserPassword(data);
+      const mailer = new NodemailerUtils();
+      const token = JWTUtil.sign({
+        payload: {
+          user: user?.id,
+        },
+        expiresIn: "10m",
+      });
+      mailer
+        .send({
+          to: user?.email,
+          html: `
+        hi ${user?.firstname} ${
+            user?.lastname
+          }, we wish to let you know that your passsword was changed at ${moment().format(
+            "LLL"
+          )}.
+        <p>
+        If your are not the one that made this changes please click the link below to create a new
+        strong password.
+        </p>
+        <br>
+        <a href="${req.protocol}://${
+            req.headers.host
+          }/reset/password?token=${token}"></a>
+        <br>
+        <p><b>Note: </b>This link expires in 10 minutes</p> 
+        <br>
+        <br>
+        <p style="text-align: center; font-size: 0.8rem"><strong>Internet Passport</strong></p>
+        `,
+        })
+        .then((info) => {
+          console.log(info);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       req.flash(
         updated ? "info" : "error",
         updated ? "Password changed successfully" : "Failed to change password"
@@ -54,7 +93,9 @@ export default class AuthController {
     } catch (error: any) {
       req.flash("error", error.message);
     }
-    res.redirect("/profile");
+    req.user?.developer
+      ? res.redirect("/developer/profile")
+      : res.redirect("/profile");
   }
 
   async logout(req: Request, res: Response) {

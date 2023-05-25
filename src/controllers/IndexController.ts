@@ -1,20 +1,11 @@
 import { Request, Response } from "express";
-import DeviceDetector from "node-device-detector";
 import UserService from "../services/UserService";
 import validateSchema from "../validators/validatorSchema";
 import { UserCreationSchema } from "../validators/schemas/UserSchema";
 import JWTUtil from "../utils/JWTUtils";
 import secretQuestions from "../data/secretQuestions";
 import VerificationService from "../services/VerificationService";
-import LoginSchema from "../validators/schemas/LoginSchema";
-import { compare } from "bcryptjs";
-import SessionAuth from "../auth/SessionAuth";
 import IRequest from "../models/interfaces/IRequest";
-const detector = new DeviceDetector({
-  clientIndexes: true,
-  deviceIndexes: true,
-  deviceAliasCode: false,
-});
 
 export default class IndexController {
   private userService = new UserService();

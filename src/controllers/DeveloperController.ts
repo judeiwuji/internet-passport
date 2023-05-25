@@ -1,13 +1,17 @@
 import { Request, Response } from "express";
 import DeveloperService from "../services/DeveloperService";
 import validateSchema from "../validators/validatorSchema";
-import { DeveloperCreationSchema } from "../validators/schemas/DeveloperSchema";
+import {
+  DeveloperCreationSchema,
+  DeveloperUpdateSchema,
+} from "../validators/schemas/DeveloperSchema";
 import VerificationService from "../services/VerificationService";
 import JWTUtil from "../utils/JWTUtils";
 import developerRoles from "../data/developerRoles";
 import IRequest from "../models/interfaces/IRequest";
 import ClientAppService from "../services/ClientAppService";
 import Developer from "../models/Developer";
+import User from "../models/User";
 
 export default class DeveloperController {
   private verificationService = new VerificationService();
@@ -37,12 +41,14 @@ export default class DeveloperController {
   getProfile(req: IRequest, res: Response) {
     res.render("developer/profile", {
       page: {
-        title: "Profile - Internet Passport",
+        title: "Developer Profile - Internet Passport",
         description: "Edit your account profile",
       },
       path: req.path,
       isLoggedIn: !!req.user,
       isDeveloper: req.user && req.user.developer,
+      user: req.user?.toJSON(),
+      roles: developerRoles,
     });
   }
 
@@ -106,5 +112,22 @@ export default class DeveloperController {
         roles: developerRoles,
       });
     }
+  }
+
+  async updateProfile(req: IRequest, res: Response) {
+    try {
+      const data = await validateSchema(DeveloperUpdateSchema, req.body);
+      const updated = await this.developerService.updateDeveloper(
+        data,
+        req.user as User
+      );
+      req.flash(
+        updated ? "info" : "error",
+        updated ? "Profile updated successfully" : "Failed to update"
+      );
+    } catch (error: any) {
+      req.flash("error", error.message);
+    }
+    res.redirect("/developer/profile");
   }
 }

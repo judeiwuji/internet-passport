@@ -13,4 +13,7 @@ developerRouter.get("/signup", developerController.getSignupPage);
 developerRouter.post("/signup", (req, res) =>
   developerController.signup(req, res)
 );
+developerRouter.put("/profile", (req, res) =>
+  developerController.updateProfile(req, res)
+);
 export default developerRouter;
