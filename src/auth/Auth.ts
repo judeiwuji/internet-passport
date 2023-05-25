@@ -9,10 +9,7 @@ import JWTUtil from "../utils/JWTUtils";
 export default abstract class Auth {
   protected userService = new UserService();
 
-  async createAccessToken(
-    payload: { user: string; client: string },
-    secret: string
-  ) {
+  createAccessToken(payload: { user: string; client: string }, secret: string) {
     return JWTUtil.sign({
       secret,
       payload,

@@ -25,7 +25,7 @@ export interface UserAppCreationAttribute
 @Table
 export default class UserApp extends Model<
   UserAppAttributes,
-  UserCreationAttributes
+  UserAppCreationAttribute
 > {
   @IsUUID(4)
   @PrimaryKey

@@ -11,6 +11,11 @@ body {
   width: 1.5em;
   height: 1.5em;
 }
+
+.logo-sm {
+  width: 0.8em;
+  height: 0.8em;
+}
 /* logo */
 
 /* banner */
@@ -87,6 +92,16 @@ body {
 /* rounded-card */
 .rounded-card {
   border-radius: 10px;
+}
+
+.rounded-card .card-header {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.rounded-card .card-footer {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 /* rounded-card */
 

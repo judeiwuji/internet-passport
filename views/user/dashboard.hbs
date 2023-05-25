@@ -27,7 +27,7 @@
                                 <td>{{device.data.device.type}}</td>
                                 <td>{{dateFormat device.updatedAt 'Do MMMM YYYY'}}</td>
                                 <td>
-                                    <form action="/user/devices/{{device.id}}" method="post" class="form-inline m-0">
+                                    <form action="/users/devices/{{device.id}}" method="post" class="form-inline m-0">
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash-alt"></i>
@@ -56,6 +56,24 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            {{#each apps as |app|}}
+                            <tr>
+                                <td>{{math @index "+" 1}}.</td>
+                                <td>{{app.client.name}}</td>
+                                <td>{{dateFormat app.createdAt 'Do MMMM YYYY'}}</td>
+                                <td>
+                                    <form action="/users/apps/{{app.id}}" method="post" class="form-inline m-0">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
                     </table>
                 </div>
             </div>

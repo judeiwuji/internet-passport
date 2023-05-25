@@ -29,7 +29,7 @@ export default class VerificationController {
       },
       path: req.path,
       isStateValid,
-      data: jwtData ? jwtData.payload : {},
+      data: jwtData ? jwtData : {},
       state,
     });
   }
@@ -45,7 +45,7 @@ export default class VerificationController {
       if (code === jwtData.payload["code"]) {
         req.flash("info", "Account verified");
         const user = await this.userService.findUserBy({
-          email: jwtData.payload.email,
+          email: jwtData.email,
         });
         const session = await this.auth.createSession({
           userAgent: req.headers["user-agent"] as string,

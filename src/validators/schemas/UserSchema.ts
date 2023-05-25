@@ -25,3 +25,8 @@ export const ChangePasswordSchema = object({
   newPassword: string().required("Provide your new password"),
   oldPassword: string().required("Provide your old password"),
 });
+
+export const UserPublicProfileRequest = object({
+  code: string().required(),
+  secret: string().required(),
+});

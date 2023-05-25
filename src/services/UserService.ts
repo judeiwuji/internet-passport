@@ -14,6 +14,8 @@ import Developer from "../models/Developer";
 import UserApp from "../models/UserApp";
 import UserDevice from "../models/UserDevice";
 import DeviceDetector from "node-device-detector";
+import { ClientAppNotFoundError } from "../models/errors/ClientAppError";
+import ClientApp from "../models/ClientApp";
 
 export default class UserService {
   async createUser(
@@ -119,10 +121,12 @@ export default class UserService {
   async getDevices(userId: string) {
     const detector = new DeviceDetector();
 
-    const devices = await UserDevice.findAll({ where: { userId } });
+    const devices = await UserDevice.findAll({
+      where: { userId },
+      order: [["createdAt", "DESC"]],
+    });
     return devices.map((d) => {
       const data = detector.detect(d.userAgent);
-      console.log(data);
       return {
         ...d.toJSON(),
         data,
@@ -131,7 +135,46 @@ export default class UserService {
   }
 
   async getApps(userId: string) {
-    const apps = await UserApp.findAll({ where: { userId } });
+    const apps = await UserApp.findAll({
+      where: { userId },
+      include: [ClientApp],
+      order: [["createdAt", "DESC"]],
+    });
     return apps.map((d) => d.toJSON());
+  }
+
+  async findAppBy(query: any) {
+    const app = await UserApp.findOne({
+      where: query,
+      include: [User],
+    });
+    return app;
+  }
+
+  async deleteDevice(id: string, userId: string) {
+    if ((await UserDevice.findOne({ where: { id, userId } })) === null) {
+      throw new Error(`No device with ${id} found`);
+    }
+    const result = await UserDevice.destroy({ where: { id, userId } });
+    return result > 0;
+  }
+
+  async deleteApp(id: string, userId: string) {
+    if ((await UserApp.findOne({ where: { id, userId } })) === null) {
+      throw new Error(`No app with ${id} found`);
+    }
+    const result = await UserApp.destroy({ where: { id, userId } });
+    return result > 0;
+  }
+
+  async getPublicProfile(id: string) {
+    const user = await User.findByPk(id, {
+      attributes: ["firstname", "lastname", "email"],
+    });
+
+    if (!user) {
+      throw new UserNotFoundError("No user found");
+    }
+    return user;
   }
 }

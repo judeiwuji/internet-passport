@@ -3,12 +3,12 @@ import IRequest from "../models/interfaces/IRequest";
 import secretQuestions from "../data/secretQuestions";
 import validateSchema from "../validators/validatorSchema";
 import {
-  ChangePasswordSchema,
+  UserPublicProfileRequest,
   UserSecretUpdateSchema,
   UserUpdateSchema,
 } from "../validators/schemas/UserSchema";
 import UserService from "../services/UserService";
-import UserApp from "../models/UserApp";
+import JWTUtil from "../utils/JWTUtils";
 
 export default class UserController {
   private userService = new UserService();
@@ -32,7 +32,7 @@ export default class UserController {
     });
   }
 
-  getProfile(req: IRequest, res: Response) {
+  getProfilePage(req: IRequest, res: Response) {
     res.render("user/profile", {
       page: {
         title: "Profile - Internet Passport",
@@ -80,5 +80,39 @@ export default class UserController {
       req.flash("error", error.message);
     }
     res.redirect("/profile");
+  }
+
+  async deleteDevice(req: IRequest, res: Response) {
+    try {
+      await this.userService.deleteDevice(
+        req.params.id,
+        req.user?.id as string
+      );
+      req.flash("info", "Device removed");
+    } catch (error: any) {
+      req.flash("error", error.message);
+    }
+    res.redirect("/dashboard");
+  }
+
+  async deleteApp(req: IRequest, res: Response) {
+    try {
+      await this.userService.deleteApp(req.params.id, req.user?.id as string);
+      req.flash("info", "App removed");
+    } catch (error: any) {
+      req.flash("error", error.message);
+    }
+    res.redirect("/dashboard");
+  }
+
+  async getPublicProfile(req: Request, res: Response) {
+    try {
+      const data = await validateSchema(UserPublicProfileRequest, req.query);
+      const jwtData = JWTUtil.verify({ token: data.code, secret: data.secret });
+      const profile = await this.userService.getPublicProfile(jwtData.user);
+      res.send(profile);
+    } catch (error: any) {
+      res.status(400).send({ status: error.message });
+    }
   }
 }

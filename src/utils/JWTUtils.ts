@@ -25,7 +25,7 @@ export default class JWTUtil {
     const secret = (options.secret || process.env.JWT_SECRET) as string;
     const issuer = options.issuer || process.env.JWT_ISSUER;
 
-    return verify(options.token, secret, { issuer, complete: true });
+    return verify(options.token, secret, { issuer, complete: true }).payload;
   }
 
   static decode(token: string) {

@@ -40,6 +40,9 @@ class App {
               "+": parseFloat(lvalue) + parseFloat(rvalue),
             }[operator];
           },
+          not: function (a: string) {
+            return !a;
+          },
         },
       })
     );

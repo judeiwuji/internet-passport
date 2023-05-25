@@ -6,22 +6,36 @@ import { ChangePasswordSchema } from "../validators/schemas/UserSchema";
 import validateSchema from "../validators/validatorSchema";
 import LoginSchema from "../validators/schemas/LoginSchema";
 import UserService from "../services/UserService";
-import { compare, genSalt, hash } from "bcryptjs";
+import { compare } from "bcryptjs";
 import JWTUtil from "../utils/JWTUtils";
 import secretQuestions from "../data/secretQuestions";
-import { IdentityChallengeSchema } from "../validators/schemas/AuthSchema";
+import {
+  AppConsentSchema,
+  IdentityChallengeSchema,
+} from "../validators/schemas/AuthSchema";
 import { UnknownUserError } from "../models/errors/AuthError";
 import UserSecret from "../models/UserSecret";
 import UserApp from "../models/UserApp";
 import ClientApp from "../models/ClientApp";
 import UserDevice from "../models/UserDevice";
+import ClientAppService from "../services/ClientAppService";
 
 export default class AuthController {
   private auth = new SessionAuth();
   private userService = new UserService();
   private sessionAuth = new SessionAuth();
+  private clientAppService = new ClientAppService();
 
-  async canDoIdentityChallenge() {}
+  toQueryParamString(query: any) {
+    let converted = "";
+
+    for (const [k, v] of Object.entries(query)) {
+      if (v) {
+        converted += converted ? `&${k}=${v}` : `${k}=${v}`;
+      }
+    }
+    return converted ? `?${converted}` : "";
+  }
 
   async changePassword(req: IRequest, res: Response) {
     const user = req.user;
@@ -60,7 +74,6 @@ export default class AuthController {
       const data = await validateSchema(LoginSchema, req.body);
       const user = await this.userService.findUserBy({ email: data.email });
       const isMatch = await compare(data.password, user.password);
-      // const isDeveloper = req.path === "/developer/login";
       if (!isMatch) {
         throw new Error("Wrong email and password combination");
       }
@@ -71,9 +84,23 @@ export default class AuthController {
           req.headers["user-agent"] as string
         );
 
+        const identityToken = this.auth.createIdentityToken(user.id);
         if (canCompleteMFA) {
-          const token = this.auth.createIdentityToken(user.id);
-          return res.redirect(`/identity/challenge?state=${token}`);
+          return res.redirect(
+            `/login/auth/identity/challenge${this.toQueryParamString({
+              state: identityToken,
+              client: req.query.client,
+            })}`
+          );
+        }
+
+        if (req.query.client) {
+          return res.redirect(
+            `/login/auth/consent${this.toQueryParamString({
+              state: identityToken,
+              client: req.query.client,
+            })}`
+          );
         }
       }
 
@@ -91,21 +118,15 @@ export default class AuthController {
         : res.redirect("/dashboard");
     } catch (error: any) {
       req.flash("error", error.message);
-      res.redirect(req.path);
+      res.redirect(`${req.path}${this.toQueryParamString(req.query)}`);
     }
-  }
-
-  async clientLogin(req: Request, res: Response) {
-    console.log(req.params.clientId);
-    console.log(req.body);
-    res.send({ status: "ok" });
   }
 
   async getIdentityChallengePage(req: Request, res: Response) {
     const { state, client } = req.query;
     let isStateValid = true;
     try {
-      const payload = JWTUtil.verify({
+      JWTUtil.verify({
         token: state as string,
       });
     } catch (error: any) {
@@ -134,7 +155,7 @@ export default class AuthController {
       const jwtData = JWTUtil.verify({
         token: data.state,
       });
-      const userId = jwtData.payload.user;
+      const userId = jwtData.user;
       console.log(jwtData);
       const userSecret = await UserSecret.findOne({
         where: { userId, question: data.question },
@@ -160,7 +181,9 @@ export default class AuthController {
 
         if (!userApp) {
           // redirect to consent page
-          return res.redirect(`/client/apps/consent/${client}`);
+          return res.redirect(
+            `/login/auth/consent/?state=${state}&client=${client}`
+          );
         }
 
         // create access token and redirect to client url
@@ -198,7 +221,69 @@ export default class AuthController {
       res.redirect("/dashboard");
     } catch (error: any) {
       req.flash("error", error.message);
-      res.redirect(`/identity/challenge${queryStr}`);
+      res.redirect(`/login/auth/identity/challenge${queryStr}`);
+    }
+  }
+
+  async getUserAppConsentPage(req: Request, res: Response) {
+    const { state, client } = req.query;
+    let app: ClientApp | null = null;
+    let isValidSession = true;
+
+    try {
+      app = await this.clientAppService.findAppBy({ id: client });
+      const jwtData = JWTUtil.verify({ token: state as string });
+      const userApp = await this.userService.findAppBy({
+        userId: jwtData.user,
+      });
+
+      // App allowed by user
+      if (userApp) {
+        const accessToken = this.auth.createAccessToken(
+          { user: jwtData.user, client: app.id },
+          app.secret
+        );
+        return res.redirect(`${app.redirectURL}?code=${accessToken}`);
+      }
+    } catch (error) {
+      isValidSession = false;
+    }
+
+    res.render("consent", {
+      page: {
+        title: "Consent screen - Internet Passport",
+        description: "Allow app to get your profile",
+      },
+      isValidSession,
+      app: app?.toJSON(),
+      client: req.query.client,
+      state: req.query.state,
+    });
+  }
+
+  async processUserAppConsent(req: Request, res: Response) {
+    try {
+      const jwtData = JWTUtil.verify({ token: req.body.state });
+      const app = await this.clientAppService.findAppBy({
+        id: req.body.client,
+      });
+      await validateSchema(AppConsentSchema, req.body);
+
+      await UserApp.create({
+        userId: jwtData.user,
+        clientId: app.id,
+      });
+      const accessToken = this.auth.createAccessToken(
+        {
+          user: jwtData.user,
+          client: app.id,
+        },
+        app.secret
+      );
+      res.redirect(`${app.redirectURL}?code=${accessToken}`);
+    } catch (error: any) {
+      req.flash("error", error.message);
+      res.redirect(`/login/auth/consent${this.toQueryParamString(req.query)}`);
     }
   }
 }
