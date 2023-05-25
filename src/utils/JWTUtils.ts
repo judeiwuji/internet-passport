@@ -7,8 +7,8 @@ export default class JWTUtil {
     secret?: string;
     issuer?: string;
   }) {
-    const secret = (options.secret || process.env.JWT_SECRET) as string;
-    const issuer = options.issuer || process.env.JWT_ISSUER;
+    const secret = (options.secret || process.env["JWT_SECRET"]) as string;
+    const issuer = options.issuer || process.env["JWT_ISSUER"];
     const config: SignOptions = { issuer };
 
     if (options.expiresIn) {
@@ -22,8 +22,8 @@ export default class JWTUtil {
     secret?: string;
     issuer?: string;
   }): any {
-    const secret = (options.secret || process.env.JWT_SECRET) as string;
-    const issuer = options.issuer || process.env.JWT_ISSUER;
+    const secret = (options.secret || process.env["JWT_SECRET"]) as string;
+    const issuer = options.issuer || process.env["JWT_ISSUER"];
 
     return verify(options.token, secret, { issuer, complete: true }).payload;
   }

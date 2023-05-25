@@ -206,6 +206,15 @@ a.link:hover {
   color: #4e4e4e;
 }
 /* title-text */
+
+.table-wrapper {
+  overflow: auto;
+  max-width: 100%;
+}
+
+.table-wrapper table {
+  min-width: 1000px;
+}
 @media screen and (max-width: 991px) {
   .banner {
     padding: 5rem;
