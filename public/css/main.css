@@ -267,4 +267,8 @@ a.link:hover {
   .signup-form-wrapper {
     width: 100%;
   }
+
+  .signup-card .card-body {
+    padding: 2rem;
+  }
 }
