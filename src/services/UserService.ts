@@ -17,6 +17,7 @@ import UserDevice from "../models/UserDevice";
 import DeviceDetector from "node-device-detector";
 import { ClientAppNotFoundError } from "../models/errors/ClientAppError";
 import ClientApp from "../models/ClientApp";
+import NotFoundError from "../models/errors/NotFoundError";
 
 export default class UserService {
   async createUser(
@@ -65,7 +66,7 @@ export default class UserService {
       include: [Developer, UserSecret],
     });
     if (user === null) {
-      throw new UserNotFoundError("No user found");
+      throw new NotFoundError("No record found");
     }
     return user;
   }
@@ -184,7 +185,7 @@ export default class UserService {
       where: query,
     });
     if (userSecret === null) {
-      throw new UserSecretNotFoundError("No user found");
+      throw new NotFoundError("No user found");
     }
     return userSecret;
   }

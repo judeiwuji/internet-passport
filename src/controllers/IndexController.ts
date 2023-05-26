@@ -88,4 +88,15 @@ export default class IndexController {
       appName: AppConfig.appName,
     });
   }
+
+  getNotFoundPage(req: IRequest, res: Response) {
+    res.render("error404", {
+      page: {
+        title: `Error 404 - ${AppConfig.appName}`,
+        description: `Page not found`,
+      },
+      isLoggedIn: !!req.user,
+      isDeveloper: req.user && req.user.developer,
+    });
+  }
 }

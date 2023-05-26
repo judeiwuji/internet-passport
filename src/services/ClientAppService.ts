@@ -9,6 +9,7 @@ import {
   ClientAppError,
   ClientAppNotFoundError,
 } from "../models/errors/ClientAppError";
+import NotFoundError from "../models/errors/NotFoundError";
 
 export default class ClientAppService {
   async createApp(data: ClientAppCreationAttributes, developer: Developer) {
@@ -60,7 +61,7 @@ export default class ClientAppService {
     });
 
     if (!app) {
-      throw new ClientAppNotFoundError("App not found");
+      throw new NotFoundError("App not found");
     }
     return app;
   }

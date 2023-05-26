@@ -5,8 +5,10 @@ import developerRoute from "./DeveloperRoute";
 import verificationRoute from "./VerificationRoute";
 import authRoute from "./AuthRoute";
 import clientAppRoute from "./ClientAppRoute";
+import IndexController from "../controllers/IndexController";
 
 export default class RouteManager {
+  indexController = new IndexController();
   constructor(private app: Application) {
     this.register();
   }
@@ -18,5 +20,6 @@ export default class RouteManager {
     this.app.use("", verificationRoute);
     this.app.use("", authRoute);
     this.app.use("/client", clientAppRoute);
+    this.app.all("**", this.indexController.getNotFoundPage);
   }
 }

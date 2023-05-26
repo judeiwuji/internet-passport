@@ -16,19 +16,6 @@
                             <p>Use your {{appName}}</p>
                         </div>
 
-                        {{#if error}}
-                        <div class="alert alert-danger">
-                            <div class="d-flex justify-content-between">
-                                <p class="m-0">
-                                    {{error}}
-                                </p>
-                                <a href="javascript: void(0)" class="close" data-dismiss="alert">
-                                    &times;
-                                </a>
-                            </div>
-                        </div>
-                        {{/if}}
-
                         {{> flashMessage}}
 
                         <form method="post">

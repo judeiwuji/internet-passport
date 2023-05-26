@@ -43,21 +43,20 @@ export default class ClientAppController {
 
     try {
       app = (await this.clientAppService.findAppBy({ id })).toJSON();
+      res.render("developer/applicationDetails", {
+        page: {
+          title: `${app.name} - ${AppConfig.appName}`,
+          description: `manage ${app.name}`,
+        },
+        path: req.path,
+        isLoggedIn: !!req.user,
+        isDeveloper: req.user && req.user.developer,
+        app,
+        error,
+      });
     } catch (err: any) {
-      error = err;
+      res.redirect("/notfound");
     }
-
-    res.render("developer/applicationDetails", {
-      page: {
-        title: `${app.name} - ${AppConfig.appName}`,
-        description: `manage ${app.name}`,
-      },
-      path: req.path,
-      isLoggedIn: !!req.user,
-      isDeveloper: req.user && req.user.developer,
-      app,
-      error,
-    });
   }
 
   async updateApp(req: Request, res: Response) {

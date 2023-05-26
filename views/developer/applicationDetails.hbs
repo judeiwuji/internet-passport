@@ -1,11 +1,6 @@
 {{> navbar}}
 <div class="wrapper-md">
     <div class="container py-5">
-        {{#if error}}
-        <div class="alert alert-warning">
-            <p>{{error.message}}</p>
-        </div>
-        {{else}}
         <div class="card rounded-card bg-transparent mb-5">
             <div class="card-body">
                 <div class="mb-3">
@@ -73,7 +68,6 @@
 
                 <div class="row">
                     <div class="col-12">
-                        {{> flashMessage}}
                         <div class="card rounded-card border-0">
                             <div class="card-body">
                                 <h5>Redirect URL</h5>
@@ -102,7 +96,6 @@
                 <button class="btn btn-full" data-toggle="modal" data-target="#howToInstallApp">Install</button>
             </div>
         </div>
-        {{/if}}
     </div>
 </div>
 
