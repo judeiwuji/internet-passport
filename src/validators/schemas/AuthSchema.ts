@@ -1,4 +1,4 @@
-import { boolean, object, string } from "yup";
+import { boolean, object, ref, string } from "yup";
 
 export const IdentityChallengeSchema = object({
   state: string().required("State is missing"),
@@ -9,4 +9,12 @@ export const IdentityChallengeSchema = object({
 export const AppConsentSchema = object({
   client: string().required("Missing credentials"),
   state: string().required("Missing credentials"),
+});
+
+export const ResetPasswordSchema = object({
+  state: string().required("Missing credentials"),
+  confirmPassword: string()
+    .oneOf([ref("newPassword")])
+    .required("Password mismatch"),
+  newPassword: string().required("Provide new password"),
 });

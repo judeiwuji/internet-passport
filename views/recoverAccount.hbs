@@ -13,43 +13,19 @@
                                 </div>
                             </a>
                             <!-- Logo -->
-                            <p>Use your internet passport</p>
+                            <p>Reset your account password</p>
                         </div>
-
-                        {{#if error}}
-                        <div class="alert alert-danger">
-                            <div class="d-flex justify-content-between">
-                                <p class="m-0">
-                                    {{error}}
-                                </p>
-                                <a href="javascript: void(0)" class="close" data-dismiss="alert">
-                                    &times;
-                                </a>
-                            </div>
-                        </div>
-                        {{/if}}
 
                         {{> flashMessage}}
-
                         <form method="post">
                             <div class="mb-4">
                                 <input type="email" class="form-control" placeholder="Email" name="email">
                             </div>
 
-                            <div class="mb-4">
-                                <input type="password" class="form-control" placeholder="Password" name="password">
-                                <div class="mt-2">
-                                    <a href="/login/auth/recoverAccount/identity">
-                                        Forgot your password?
-                                    </a>
-                                </div>
-                            </div>
                             <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                <a href="/signup">
-                                    Create account
-                                </a>
+                                <a href="/login">Login</a>
                                 <button type="submit" class="btn btn-full">
-                                    Login
+                                    Next
                                 </button>
                             </div>
                         </form>

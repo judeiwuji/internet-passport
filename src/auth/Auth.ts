@@ -5,6 +5,10 @@ import { PasswordNotMatchError } from "../models/errors/AuthError";
 import UserDevice from "../models/UserDevice";
 import moment from "moment";
 import JWTUtil from "../utils/JWTUtils";
+import crypto from "crypto";
+import User from "../models/User";
+import NodemailerUtils from "../utils/NodemailerUtils";
+import { Request } from "express";
 
 export default abstract class Auth {
   protected userService = new UserService();
@@ -48,5 +52,23 @@ export default abstract class Auth {
       },
       expiresIn: process.env["AUTH_CHALLENGE_EXPIRE"],
     });
+  }
+
+  generateRecoveryLink(req: Request, user: User) {
+    const token = JWTUtil.sign({
+      payload: {
+        user: user.id,
+      },
+      expiresIn: "15m",
+    });
+    const link = `${req.protocol}://${req.headers.host}/auth/resetPassword?token=${token}`;
+    return link;
+  }
+
+  async resetPassword(request: { userId: string; newPassword: string }) {
+    const user = await this.userService.findUserBy({ id: request.userId });
+    const salt = await genSalt(12);
+    const passwordHash = await hash(request.newPassword, salt);
+    return this.userService.changePassword(passwordHash, user.id);
   }
 }

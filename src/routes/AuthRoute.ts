@@ -22,4 +22,28 @@ authRouter.get("/login/auth/consent", (req, res) =>
 authRouter.post("/login/auth/consent", (req, res) =>
   authController.processUserAppConsent(req, res)
 );
+
+authRouter.get("/login/auth/recoverAccount/identity", (req, res) =>
+  authController.getRecoverAccountIdentityPage(req, res)
+);
+
+authRouter.post("/login/auth/recoverAccount/identity", (req, res) =>
+  authController.recoverAccountIdentity(req, res)
+);
+
+authRouter.get("/login/auth/recoverAccount/challenge", (req, res) =>
+  authController.getRecoverAccountChallengePage(req, res)
+);
+
+authRouter.post("/login/auth/recoverAccount/challenge", (req, res) =>
+  authController.recoverAccountChallenge(req, res)
+);
+
+authRouter.get("/auth/resetPassword", (req, res) =>
+  authController.getResetPasswordPage(req, res)
+);
+
+authRouter.post("/auth/resetPassword", (req, res) =>
+  authController.resetPassword(req, res)
+);
 export default authRouter;

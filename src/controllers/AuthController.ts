@@ -12,6 +12,7 @@ import secretQuestions from "../data/secretQuestions";
 import {
   AppConsentSchema,
   IdentityChallengeSchema,
+  ResetPasswordSchema,
 } from "../validators/schemas/AuthSchema";
 import { UnknownUserError } from "../models/errors/AuthError";
 import UserSecret from "../models/UserSecret";
@@ -21,6 +22,7 @@ import UserDevice from "../models/UserDevice";
 import ClientAppService from "../services/ClientAppService";
 import NodemailerUtils from "../utils/NodemailerUtils";
 import moment from "moment";
+import User from "../models/User";
 
 export default class AuthController {
   private auth = new SessionAuth();
@@ -39,6 +41,37 @@ export default class AuthController {
     return converted ? `?${converted}` : "";
   }
 
+  async sendAccountRecoveryEmail(user: User, link: string) {
+    console.log(user.email);
+    const mailer = new NodemailerUtils();
+    return mailer.send({
+      html: `
+    <h1 style="font-weight: 700; font-size: 1.5rem">Internet passport</h1>
+    <br>
+    <br>
+    <p>Hi <strong>${user.firstname}</strong>, someone tried to reset your password.
+    If you are the one, please click on the link below, else you can ignore this
+    mail.</p>
+    <br/>
+    <br/>
+    <a href="${link}">${link}</a>
+    <p>
+      <strong>Note:</strong>
+      This link will expire in 15 minutes.
+    </p>
+    <br/>
+    <br/>
+    <p style="text-align: center">
+      <strong>Internet Passport</strong>
+    </p>
+    `,
+      text: "",
+      to: user.email,
+      subject: "Internet Passport Account Recovery",
+      priority: "high",
+    });
+  }
+
   async changePassword(req: IRequest, res: Response) {
     const user = req.user;
     try {
@@ -50,12 +83,7 @@ export default class AuthController {
 
       const updated = await this.auth.updateUserPassword(data);
       const mailer = new NodemailerUtils();
-      const token = JWTUtil.sign({
-        payload: {
-          user: user?.id,
-        },
-        expiresIn: "10m",
-      });
+      const link = this.auth.generateRecoveryLink(req, user as User);
       mailer
         .send({
           to: user?.email,
@@ -70,11 +98,9 @@ export default class AuthController {
         strong password.
         </p>
         <br>
-        <a href="${req.protocol}://${
-            req.headers.host
-          }/reset/password?token=${token}"></a>
+        <a href="${link}">${link}</a>
         <br>
-        <p><b>Note: </b>This link expires in 10 minutes</p> 
+        <p><b>Note: </b>This link expires in 15 minutes</p> 
         <br>
         <br>
         <p style="text-align: center; font-size: 0.8rem"><strong>Internet Passport</strong></p>
@@ -325,6 +351,135 @@ export default class AuthController {
     } catch (error: any) {
       req.flash("error", error.message);
       res.redirect(`/login/auth/consent${this.toQueryParamString(req.query)}`);
+    }
+  }
+
+  async getRecoverAccountIdentityPage(req: Request, res: Response) {
+    res.render("recoverAccount", {
+      page: {
+        title: "Recover account - Internet passport",
+        description: "Account recovery",
+      },
+    });
+  }
+
+  async recoverAccountIdentity(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        throw new Error("Provide your account email");
+      }
+      const user = await this.userService.findUserBy({ email });
+
+      if (user.developer) {
+        const link = this.auth.generateRecoveryLink(req, user);
+        console.log(link);
+        await this.sendAccountRecoveryEmail(user, link);
+        req.flash(
+          "info",
+          "An account recovery email has been sent to your email"
+        );
+        return res.redirect("/login/auth/recoverAccount/identity");
+      } else {
+        const token = this.auth.createIdentityToken(user.id);
+        res.redirect(`/login/auth/recoverAccount/challenge?state=${token}`);
+      }
+    } catch (error: any) {
+      req.flash("error", error.message);
+      res.redirect("back");
+    }
+  }
+
+  async getRecoverAccountChallengePage(req: Request, res: Response) {
+    let isValidSession = true;
+    try {
+      JWTUtil.verify({ token: req.query.state as string });
+    } catch (error) {
+      isValidSession = false;
+    }
+    res.render("challenge", {
+      page: {
+        title: "Recover account challenge - Internet passport",
+        description: "Account recovery challenge",
+      },
+      isValidSession,
+      questions: secretQuestions,
+      state: req.query.state,
+      client: req.query.client,
+    });
+  }
+
+  async recoverAccountChallenge(req: IRequest, res: Response) {
+    try {
+      const data = await validateSchema(IdentityChallengeSchema, req.body);
+      console.log(data);
+      const jwtData = JWTUtil.verify({ token: data.state });
+      const user = await this.userService.findUserBy({ id: jwtData.user });
+      const secret = await this.userService.findSecretBy({
+        userId: jwtData.user,
+        question: data.question,
+      });
+      const isMatch = await compare(data.answer, secret.answer);
+
+      if (!isMatch) {
+        throw new UnknownUserError("Wrong question and answer combination");
+      }
+      const link = this.auth.generateRecoveryLink(req, user);
+      await this.sendAccountRecoveryEmail(user, link);
+      req.flash(
+        "info",
+        "An account recovery email has been sent to your email"
+      );
+      res.redirect("/login/auth/recoverAccount/identity");
+    } catch (error: any) {
+      req.flash("error", error.message);
+      res.redirect(
+        `/login/auth/recoverAccount/challenge${this.toQueryParamString({
+          state: req.body.state,
+          client: req.body.client,
+        })}`
+      );
+    }
+  }
+
+  async getResetPasswordPage(req: Request, res: Response) {
+    let isValidSession = true;
+    let user: any;
+    try {
+      const jwtData = JWTUtil.verify({ token: req.query.token as string });
+      user = (await this.userService.findUserBy({ id: jwtData.user })).toJSON();
+    } catch (error) {
+      isValidSession = false;
+    }
+    res.render("resetPassword", {
+      page: {
+        title: "Reset account password - Internet passport",
+        description: "Reset account password",
+      },
+      isValidSession,
+      state: req.query.token,
+      client: req.query.client,
+      user,
+    });
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    try {
+      const data = await validateSchema(ResetPasswordSchema, req.body);
+      const { user } = JWTUtil.verify({ token: req.body.state });
+      this.auth.resetPassword({
+        userId: user,
+        newPassword: data.newPassword,
+      });
+      req.flash("info", "Password reset successfully");
+      res.redirect(
+        `/login${this.toQueryParamString({
+          client: req.body.client,
+        })}`
+      );
+    } catch (error: any) {
+      req.flash("error", error.message);
+      res.redirect("back");
     }
   }
 }

@@ -4,19 +4,24 @@
             <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto">
                 <div class="card rounded-card">
                     <div class="card-body">
-                        <div class="text-center mb-4">
+                        <div class="text-center mb-2">
                             <!-- Logo -->
                             <div class="d-flex justify-content-center align-tems-center mb-3 logo-pane">
                                 <img src="/imgs/logo.png" alt="Logo" class="logo mr-1" />
                                 IP
                             </div>
                             <!-- Logo -->
-                            <p class="text-muted">Identity Challenge</p>
                         </div>
-                        {{#if isStateValid}}
+                        {{#if isValidSession}}
+                        <div class="text-center mb-4">
+                            <p class="text-muted m-1">Identity Challenge</p>
+                            <p class="small text-muted">
+                                In order to protect your account from hackers, we want to know if is really you.
+                            </p>
+                        </div>
                         {{> flashMessage}}
 
-                        <form action="/identity/challenge" method="post">
+                        <form method="post">
                             <input type="hidden" name="state" value="{{state}}">
                             <input type="hidden" name="client" value="{{client}}">
                             <div class="mb-4">
@@ -35,9 +40,14 @@
                                     value="{{data.answer}}">
                             </div>
 
-                            <div class="text-center">
+
+                            <div class="d-flex align-items-center justify-content-between flex-wrap">
+                                <a href="/login">
+                                    Login
+                                </a>
+
                                 <button type="submit" class="btn btn-full">
-                                    Confirm Identity
+                                    Next
                                 </button>
                             </div>
                         </form>

@@ -4,6 +4,7 @@ import {
   UserAlreadyExistsError,
   UserCreateError,
   UserNotFoundError,
+  UserSecretNotFoundError,
 } from "../models/errors/UserError";
 import UserSecret, {
   UserSecretAttributes,
@@ -176,5 +177,15 @@ export default class UserService {
       throw new UserNotFoundError("No user found");
     }
     return user;
+  }
+
+  async findSecretBy(query: any) {
+    const userSecret = await UserSecret.findOne({
+      where: query,
+    });
+    if (userSecret === null) {
+      throw new UserSecretNotFoundError("No user found");
+    }
+    return userSecret;
   }
 }

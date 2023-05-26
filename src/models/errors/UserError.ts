@@ -17,3 +17,9 @@ export class UserNotFoundError extends BaseError {
     super("UserNotFound", message);
   }
 }
+
+export class UserSecretNotFoundError extends BaseError {
+  constructor(message: string) {
+    super("UserSecretNotFound", message);
+  }
+}

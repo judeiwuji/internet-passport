@@ -8,12 +8,19 @@ export default class NodemailerUtils {
 
   constructor() {
     this.smtp = createTransport({
-      service: "aol",
-      port: 25,
+      // service: "aol",
+      // port: 25,
+      // secure: false,
+      // auth: {
+      //   user: process.env["MAIL_USER"],
+      //   pass: process.env["MAIL_PASS"],
+      // },
+      host: "smtp.ethereal.email",
+      port: 587,
       secure: false,
       auth: {
-        user: process.env["MAIL_USER"],
-        pass: process.env["MAIL_PASS"],
+        user: "cortney.gleichner@ethereal.email",
+        pass: "V9buafPEfTjsnaY1c7",
       },
       tls: {
         rejectUnauthorized: false,
@@ -22,9 +29,13 @@ export default class NodemailerUtils {
   }
 
   async send(options: Mail.Options) {
-    console.log(process.env["MAIL_USER"]);
-    options.from = `${process.env["MAIL_USER"]}`;
-
-    return this.smtp.sendMail(options);
+    options.from = "cortney.gleichner@ethereal.email"; // `${process.env["MAIL_USER"]}`;
+    try {
+      await this.smtp.sendMail(options);
+      return true;
+    } catch (error) {
+      console.debug(error);
+      throw new Error("Unable to send mail");
+    }
   }
 }
