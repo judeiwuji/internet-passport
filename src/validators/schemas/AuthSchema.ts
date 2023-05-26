@@ -13,8 +13,6 @@ export const AppConsentSchema = object({
 
 export const ResetPasswordSchema = object({
   state: string().required("Missing credentials"),
-  confirmPassword: string()
-    .oneOf([ref("newPassword")])
-    .required("Password mismatch"),
+  confirmPassword: string().oneOf([ref("newPassword")], "Password mismatch"),
   newPassword: string().required("Provide new password"),
 });

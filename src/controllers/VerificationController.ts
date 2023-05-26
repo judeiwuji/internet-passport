@@ -43,7 +43,7 @@ export default class VerificationController {
       const jwtData = JWTUtil.verify({ token: req.body.state });
       console.log(jwtData);
       // compare code
-      if (code === jwtData.payload["code"]) {
+      if (code === jwtData["code"]) {
         req.flash("info", "Account verified");
         const user = await this.userService.findUserBy({
           email: jwtData.email,

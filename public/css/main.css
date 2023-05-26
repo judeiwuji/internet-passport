@@ -271,4 +271,8 @@ a.link:hover {
   .signup-card .card-body {
     padding: 2rem;
   }
+
+  .login-card {
+    padding: 0rem;
+  }
 }

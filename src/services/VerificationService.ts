@@ -7,7 +7,7 @@ export default class VerificationService {
   async sendCode(user: User) {
     const verificationCode = crypto.randomInt(0, 1000000);
     const mailer = new NodemailerUtils();
-
+    console.log(`\nCode: ${verificationCode}\n`);
     await mailer.send({
       html: `
     <h1 style="font-weight: 700; font-size: 1.5rem">${AppConfig.appName}</h1>
@@ -24,7 +24,6 @@ export default class VerificationService {
       to: user.email,
       subject: `${AppConfig.appName} Verification Code`,
     });
-    console.log(`\nCode: ${verificationCode}\n`);
     return verificationCode;
   }
 }
