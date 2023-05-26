@@ -3,6 +3,7 @@ import VerificationService from "../services/VerificationService";
 import JWTUtil from "../utils/JWTUtils";
 import UserService from "../services/UserService";
 import SessionAuth from "../auth/SessionAuth";
+import AppConfig from "../config/appConfig";
 
 export default class VerificationController {
   private verificationService = new VerificationService();
@@ -24,7 +25,7 @@ export default class VerificationController {
 
     res.render("verifyEmail", {
       page: {
-        title: "Verify account email - Internet Passport",
+        title: `Verify account email - ${AppConfig.appName}`,
         description: "We use your email to confirm your identity",
       },
       path: req.path,

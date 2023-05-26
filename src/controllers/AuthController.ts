@@ -23,6 +23,7 @@ import ClientAppService from "../services/ClientAppService";
 import NodemailerUtils from "../utils/NodemailerUtils";
 import moment from "moment";
 import User from "../models/User";
+import AppConfig from "../config/appConfig";
 
 export default class AuthController {
   private auth = new SessionAuth();
@@ -42,11 +43,10 @@ export default class AuthController {
   }
 
   async sendAccountRecoveryEmail(user: User, link: string) {
-    console.log(user.email);
     const mailer = new NodemailerUtils();
     return mailer.send({
       html: `
-    <h1 style="font-weight: 700; font-size: 1.5rem">Internet passport</h1>
+    <h1 style="font-weight: 700; font-size: 1.5rem">${AppConfig.appName}</h1>
     <br>
     <br>
     <p>Hi <strong>${user.firstname}</strong>, someone tried to reset your password.
@@ -62,13 +62,12 @@ export default class AuthController {
     <br/>
     <br/>
     <p style="text-align: center">
-      <strong>Internet Passport</strong>
+      <strong>${AppConfig.appName}</strong>
     </p>
     `,
       text: "",
       to: user.email,
-      subject: "Internet Passport Account Recovery",
-      priority: "high",
+      subject: `${AppConfig.appName} Account Recovery`,
     });
   }
 
@@ -103,7 +102,9 @@ export default class AuthController {
         <p><b>Note: </b>This link expires in 15 minutes</p> 
         <br>
         <br>
-        <p style="text-align: center; font-size: 0.8rem"><strong>Internet Passport</strong></p>
+        <p style="text-align: center; font-size: 0.8rem"><strong>${
+          AppConfig.appName
+        }</strong></p>
         `,
         })
         .then((info) => {
@@ -191,31 +192,29 @@ export default class AuthController {
 
   async getIdentityChallengePage(req: Request, res: Response) {
     const { state, client } = req.query;
-    let isStateValid = true;
+    let isValidSession = true;
     try {
       JWTUtil.verify({
         token: state as string,
       });
     } catch (error: any) {
-      console.log(error);
-      isStateValid = false;
+      isValidSession = false;
     }
     res.render("challenge", {
       page: {
-        title: "Identity Challenge - Internet Passport",
+        title: `Identity Challenge - ${AppConfig.appName}`,
         description: "MFA challenge",
       },
       questions: secretQuestions,
-      isStateValid,
+      isValidSession,
       state,
       client,
+      appName: AppConfig.appName,
     });
   }
 
   async processIdentityChallenge(req: Request, res: Response) {
     const { state, client } = req.body;
-    let queryStr = `?state=${state}`;
-    queryStr = client ? `${queryStr}&client=${client}` : queryStr;
 
     try {
       const data = await validateSchema(IdentityChallengeSchema, req.body);
@@ -223,7 +222,6 @@ export default class AuthController {
         token: data.state,
       });
       const userId = jwtData.user;
-      console.log(jwtData);
       const userSecret = await UserSecret.findOne({
         where: { userId, question: data.question },
       });
@@ -288,7 +286,12 @@ export default class AuthController {
       res.redirect("/dashboard");
     } catch (error: any) {
       req.flash("error", error.message);
-      res.redirect(`/login/auth/identity/challenge${queryStr}`);
+      res.redirect(
+        `/login/auth/identity/challenge${this.toQueryParamString({
+          state,
+          client,
+        })}`
+      );
     }
   }
 
@@ -318,13 +321,14 @@ export default class AuthController {
 
     res.render("consent", {
       page: {
-        title: "Consent screen - Internet Passport",
+        title: `Consent screen - ${AppConfig.appName}`,
         description: "Allow app to get your profile",
       },
       isValidSession,
       app: app?.toJSON(),
       client: req.query.client,
       state: req.query.state,
+      appName: AppConfig.appName,
     });
   }
 
@@ -357,7 +361,7 @@ export default class AuthController {
   async getRecoverAccountIdentityPage(req: Request, res: Response) {
     res.render("recoverAccount", {
       page: {
-        title: "Recover account - Internet passport",
+        title: `Recover account - ${AppConfig.appName}`,
         description: "Account recovery",
       },
     });
@@ -399,7 +403,7 @@ export default class AuthController {
     }
     res.render("challenge", {
       page: {
-        title: "Recover account challenge - Internet passport",
+        title: `Recover account challenge - ${AppConfig.appName}`,
         description: "Account recovery challenge",
       },
       isValidSession,
@@ -453,7 +457,7 @@ export default class AuthController {
     }
     res.render("resetPassword", {
       page: {
-        title: "Reset account password - Internet passport",
+        title: `Reset account password - ${AppConfig.appName}`,
         description: "Reset account password",
       },
       isValidSession,

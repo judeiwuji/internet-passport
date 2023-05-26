@@ -12,6 +12,7 @@ import IRequest from "../models/interfaces/IRequest";
 import ClientAppService from "../services/ClientAppService";
 import Developer from "../models/Developer";
 import User from "../models/User";
+import AppConfig from "../config/appConfig";
 
 export default class DeveloperController {
   private verificationService = new VerificationService();
@@ -27,7 +28,7 @@ export default class DeveloperController {
     );
     res.render("developer/dashboard", {
       page: {
-        title: "Dashboard - Internet Passport",
+        title: `Dashboard - ${AppConfig.appName}`,
         description: "Manage your applications",
       },
       path: req.path,
@@ -41,7 +42,7 @@ export default class DeveloperController {
   getProfile(req: IRequest, res: Response) {
     res.render("developer/profile", {
       page: {
-        title: "Developer Profile - Internet Passport",
+        title: `Developer Profile - ${AppConfig.appName}`,
         description: "Edit your account profile",
       },
       path: req.path,
@@ -55,7 +56,7 @@ export default class DeveloperController {
   getSignupPage(req: Request, res: Response) {
     res.render("developer/signup", {
       page: {
-        title: "Developer Signup - Internet Passport",
+        title: `Developer Signup - ${AppConfig.appName}`,
         description:
           "Start integrating Internet Passsport into your applications",
       },
@@ -67,7 +68,7 @@ export default class DeveloperController {
   getLoginPage(req: Request, res: Response) {
     res.render("developer/login", {
       page: {
-        title: "Developer login - Internet Passport",
+        title: `Developer login - ${AppConfig.appName}`,
         description:
           "Start integrating Internet Passsport into your applications",
       },
@@ -103,7 +104,7 @@ export default class DeveloperController {
       console.debug(error);
       res.render("developer/signup", {
         page: {
-          title: "Developer Signup - Internet Passport",
+          title: `Developer Signup - ${AppConfig.appName}`,
           description: "Create one identity for your net surfing",
         },
         path: req.path,

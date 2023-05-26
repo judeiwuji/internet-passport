@@ -9,6 +9,7 @@ import {
 } from "../validators/schemas/UserSchema";
 import UserService from "../services/UserService";
 import JWTUtil from "../utils/JWTUtils";
+import AppConfig from "../config/appConfig";
 
 export default class UserController {
   private userService = new UserService();
@@ -21,7 +22,7 @@ export default class UserController {
     const devices = await this.userService.getDevices(req.user?.id as string);
     res.render("user/dashboard", {
       page: {
-        title: "Dashboard - Internet Passport",
+        title: `Dashboard - ${AppConfig.appName}`,
         description: "Manage connected apps and devices",
       },
       path: req.path,
@@ -35,7 +36,7 @@ export default class UserController {
   getProfilePage(req: IRequest, res: Response) {
     res.render("user/profile", {
       page: {
-        title: "Profile - Internet Passport",
+        title: `Profile - ${AppConfig.appName}`,
         description: "Edit your account profile",
       },
       path: req.path,

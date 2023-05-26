@@ -1,3 +1,4 @@
+import AppConfig from "../config/appConfig";
 import User from "../models/User";
 import NodemailerUtils from "../utils/NodemailerUtils";
 import crypto from "crypto";
@@ -7,19 +8,23 @@ export default class VerificationService {
     const verificationCode = crypto.randomInt(0, 1000000);
     const mailer = new NodemailerUtils();
 
-    const info = await mailer.send({
+    await mailer.send({
       html: `
+    <h1 style="font-weight: 700; font-size: 1.5rem">${AppConfig.appName}</h1>
+    <br>
+    <br>
     <p>Hi <strong>${user.firstname}</strong>, your verification code is:</p>
     <h1 style="text-align: center">${verificationCode}</h1>
     <br/>
     <p>
       <strong>Note:</strong>
-      This verification code will expire after 10mins it was generated.
+      This verification code will expire after 10 minutes it was generated.
     </p>
     `,
       to: user.email,
-      subject: "Internet Passport Verification Code",
+      subject: `${AppConfig.appName} Verification Code`,
     });
+    console.log(`\nCode: ${verificationCode}\n`);
     return verificationCode;
   }
 }

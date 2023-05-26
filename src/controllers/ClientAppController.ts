@@ -8,6 +8,7 @@ import ClientAppService from "../services/ClientAppService";
 import IRequest from "../models/interfaces/IRequest";
 import Developer from "../models/Developer";
 import ClientApp from "../models/ClientApp";
+import AppConfig from "../config/appConfig";
 
 export default class ClientAppController {
   private clientAppService = new ClientAppService();
@@ -48,7 +49,7 @@ export default class ClientAppController {
 
     res.render("developer/applicationDetails", {
       page: {
-        title: `${app.name} - Internet Passport`,
+        title: `${app.name} - ${AppConfig.appName}`,
         description: `manage ${app.name}`,
       },
       path: req.path,

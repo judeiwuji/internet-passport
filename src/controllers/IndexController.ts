@@ -6,6 +6,7 @@ import JWTUtil from "../utils/JWTUtils";
 import secretQuestions from "../data/secretQuestions";
 import VerificationService from "../services/VerificationService";
 import IRequest from "../models/interfaces/IRequest";
+import AppConfig from "../config/appConfig";
 
 export default class IndexController {
   private userService = new UserService();
@@ -14,23 +15,26 @@ export default class IndexController {
   getHomePage(req: IRequest, res: Response) {
     res.render("index", {
       page: {
-        title: "Internet Passport",
-        description: "Provides authentication as a service",
+        title: `${AppConfig.appName}`,
+        description:
+          "Your passport on the internet. Create one identity for all websites.",
       },
       path: req.path,
       isLoggedIn: !!req.user,
       isDeveloper: !!req.user?.developer,
+      appName: AppConfig.appName,
     });
   }
 
   getSignupPage(req: Request, res: Response) {
     res.render("signup", {
       page: {
-        title: "Signup - Internet Passport",
+        title: `Signup - ${AppConfig.appName}`,
         description: "Create one identity for your net surfing",
       },
       path: req.path,
       questions: secretQuestions,
+      appName: AppConfig.appName,
     });
   }
 
@@ -62,13 +66,14 @@ export default class IndexController {
       console.debug(error);
       res.render("signup", {
         page: {
-          title: "Signup - Internet Passport",
+          title: `Signup - ${AppConfig.appName}`,
           description: "Create one identity for your net surfing",
         },
         path: req.path,
         error,
         data: req.body,
         questions: secretQuestions,
+        appName: AppConfig.appName,
       });
     }
   }
@@ -76,10 +81,11 @@ export default class IndexController {
   getLoginPage(req: Request, res: Response) {
     res.render("login", {
       page: {
-        title: "Login - Internet Passport",
-        description: "Login into your Internet Passport",
+        title: `Login - ${AppConfig.appName}`,
+        description: `Login into your ${AppConfig.appName}`,
       },
       path: req.path,
+      appName: AppConfig.appName,
     });
   }
 }

@@ -8,19 +8,11 @@ export default class NodemailerUtils {
 
   constructor() {
     this.smtp = createTransport({
-      // service: "aol",
-      // port: 25,
-      // secure: false,
-      // auth: {
-      //   user: process.env["MAIL_USER"],
-      //   pass: process.env["MAIL_PASS"],
-      // },
-      host: "smtp.ethereal.email",
-      port: 587,
+      service: "aol",
       secure: false,
       auth: {
-        user: "cortney.gleichner@ethereal.email",
-        pass: "V9buafPEfTjsnaY1c7",
+        user: process.env["MAIL_USER"],
+        pass: process.env["MAIL_PASS"],
       },
       tls: {
         rejectUnauthorized: false,
@@ -29,7 +21,7 @@ export default class NodemailerUtils {
   }
 
   async send(options: Mail.Options) {
-    options.from = "cortney.gleichner@ethereal.email"; // `${process.env["MAIL_USER"]}`;
+    options.from = `${process.env["MAIL_USER"]}`;
     try {
       await this.smtp.sendMail(options);
       return true;
