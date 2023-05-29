@@ -1,17 +1,18 @@
-import path from "path";
-import express, { Application, Request, Response } from "express";
-import cookieParser from "cookie-parser";
-import { engine } from "express-handlebars";
-import morgan from "morgan";
-import * as dotenv from "dotenv";
-import RouteManager from "./routes/RouteManager";
-import DB from "./models/engine/DBStorage";
-import userAgent from "express-useragent";
-import methodOverride from "method-override";
-import deserializeUser from "./middlewares/deserializeUser";
-import session from "express-session";
-import flash from "connect-flash";
-const dateFormat = require("handlebars-dateformat");
+import path from 'path';
+import express, { Application, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
+import { engine } from 'express-handlebars';
+import morgan from 'morgan';
+import * as dotenv from 'dotenv';
+import RouteManager from './routes/RouteManager';
+import DB from './models/engine/DBStorage';
+import userAgent from 'express-useragent';
+import methodOverride from 'method-override';
+import deserializeUser from './middlewares/deserializeUser';
+import session from 'express-session';
+import flash from 'connect-flash';
+import cors from 'cors';
+const dateFormat = require('handlebars-dateformat');
 dotenv.config();
 
 class App {
@@ -27,9 +28,9 @@ class App {
 
   middlewares() {
     this.app.engine(
-      "hbs",
+      'hbs',
       engine({
-        extname: "hbs",
+        extname: 'hbs',
         helpers: {
           equals: function (a: any, b: any) {
             return a === b;
@@ -37,7 +38,7 @@ class App {
           dateFormat: dateFormat,
           math: function (lvalue: string, operator: string, rvalue: string) {
             return {
-              "+": parseFloat(lvalue) + parseFloat(rvalue),
+              '+': parseFloat(lvalue) + parseFloat(rvalue),
             }[operator];
           },
           not: function (a: string) {
@@ -46,16 +47,17 @@ class App {
         },
       })
     );
-    this.app.set("view engine", "hbs");
-    this.app.set("views", path.join(__dirname, "../views"));
-    this.app.use(express.static(path.join(__dirname, "..", "public")));
+    this.app.set('view engine', 'hbs');
+    this.app.set('views', path.join(__dirname, '../views'));
+    this.app.use(express.static(path.join(__dirname, '..', 'public')));
     this.app.use(express.json({}));
     this.app.use(express.urlencoded({ extended: false }));
-    this.app.use(morgan("dev"));
+    this.app.use(morgan('dev'));
+    this.app.use(cors({ origin: '*' }));
     this.app.use(userAgent.express());
     this.app.use(
       methodOverride((req: Request, res: Response) => {
-        if (req.body && typeof req.body === "object" && "_method" in req.body) {
+        if (req.body && typeof req.body === 'object' && '_method' in req.body) {
           // look in urlencoded POST bodies and delete it
           var method = req.body._method;
           delete req.body._method;
@@ -63,10 +65,10 @@ class App {
         }
       })
     );
-    this.app.use(cookieParser(process.env["COOKIE_SECRET"]));
+    this.app.use(cookieParser(process.env['COOKIE_SECRET']));
     this.app.use(
       session({
-        secret: process.env["SESSION_SECRET"] as string,
+        secret: process.env['SESSION_SECRET'] as string,
         saveUninitialized: true,
         resave: false,
         cookie: {
@@ -78,8 +80,8 @@ class App {
     this.app.use(deserializeUser);
     // App local variables
     this.app.use((req, res, next) => {
-      res.locals.info = req.flash("info");
-      res.locals.error = req.flash("error");
+      res.locals.info = req.flash('info');
+      res.locals.error = req.flash('error');
 
       next();
     });
@@ -104,4 +106,4 @@ if (require.main === module) {
   run();
 }
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';

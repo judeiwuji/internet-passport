@@ -1,29 +1,29 @@
-import { Request, Response } from "express";
-import SessionAuth from "../auth/SessionAuth";
-import IChangePasswordRequest from "../models/interfaces/IChangePasswordRequest";
-import IRequest from "../models/interfaces/IRequest";
-import { ChangePasswordSchema } from "../validators/schemas/UserSchema";
-import validateSchema from "../validators/validatorSchema";
-import LoginSchema from "../validators/schemas/LoginSchema";
-import UserService from "../services/UserService";
-import { compare } from "bcryptjs";
-import JWTUtil from "../utils/JWTUtils";
-import secretQuestions from "../data/secretQuestions";
+import { Request, Response } from 'express';
+import SessionAuth from '../auth/SessionAuth';
+import IChangePasswordRequest from '../models/interfaces/IChangePasswordRequest';
+import IRequest from '../models/interfaces/IRequest';
+import { ChangePasswordSchema } from '../validators/schemas/UserSchema';
+import validateSchema from '../validators/validatorSchema';
+import LoginSchema from '../validators/schemas/LoginSchema';
+import UserService from '../services/UserService';
+import { compare } from 'bcryptjs';
+import JWTUtil from '../utils/JWTUtils';
+import secretQuestions from '../data/secretQuestions';
 import {
   AppConsentSchema,
   IdentityChallengeSchema,
   ResetPasswordSchema,
-} from "../validators/schemas/AuthSchema";
-import { UnknownUserError } from "../models/errors/AuthError";
-import UserSecret from "../models/UserSecret";
-import UserApp from "../models/UserApp";
-import ClientApp from "../models/ClientApp";
-import UserDevice from "../models/UserDevice";
-import ClientAppService from "../services/ClientAppService";
-import NodemailerUtils from "../utils/NodemailerUtils";
-import moment from "moment";
-import User from "../models/User";
-import AppConfig from "../config/appConfig";
+} from '../validators/schemas/AuthSchema';
+import { UnknownUserError } from '../models/errors/AuthError';
+import UserSecret from '../models/UserSecret';
+import UserApp from '../models/UserApp';
+import ClientApp from '../models/ClientApp';
+import UserDevice from '../models/UserDevice';
+import ClientAppService from '../services/ClientAppService';
+import NodemailerUtils from '../utils/NodemailerUtils';
+import moment from 'moment';
+import User from '../models/User';
+import AppConfig from '../config/appConfig';
 
 export default class AuthController {
   private auth = new SessionAuth();
@@ -32,14 +32,14 @@ export default class AuthController {
   private clientAppService = new ClientAppService();
 
   toQueryParamString(query: any) {
-    let converted = "";
+    let converted = '';
 
     for (const [k, v] of Object.entries(query)) {
       if (v) {
         converted += converted ? `&${k}=${v}` : `${k}=${v}`;
       }
     }
-    return converted ? `?${converted}` : "";
+    return converted ? `?${converted}` : '';
   }
 
   async sendAccountRecoveryEmail(user: User, link: string) {
@@ -65,7 +65,7 @@ export default class AuthController {
       <strong>${AppConfig.appName}</strong>
     </p>
     `,
-      text: "",
+      text: '',
       to: user.email,
       subject: `${AppConfig.appName} Account Recovery`,
     });
@@ -90,7 +90,7 @@ export default class AuthController {
         hi ${user?.firstname} ${
             user?.lastname
           }, we wish to let you know that your passsword was changed at ${moment().format(
-            "LLL"
+            'LLL'
           )}.
         <p>
         If your are not the one that made this changes please click the link below to create a new
@@ -114,27 +114,27 @@ export default class AuthController {
           console.log(error);
         });
       req.flash(
-        updated ? "info" : "error",
-        updated ? "Password changed successfully" : "Failed to change password"
+        updated ? 'info' : 'error',
+        updated ? 'Password changed successfully' : 'Failed to change password'
       );
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
     }
     req.user?.developer
-      ? res.redirect("/developer/profile")
-      : res.redirect("/profile");
+      ? res.redirect('/developer/profile')
+      : res.redirect('/profile');
   }
 
   async logout(req: Request, res: Response) {
-    const session = req.cookies["session"];
+    const session = req.cookies['session'];
 
     try {
-      res.cookie("session", "");
+      res.cookie('session', '');
       await this.auth.logout(session);
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
     }
-    res.redirect("/");
+    res.redirect('/');
   }
 
   async login(req: Request, res: Response) {
@@ -143,13 +143,13 @@ export default class AuthController {
       const user = await this.userService.findUserBy({ email: data.email });
       const isMatch = await compare(data.password, user.password);
       if (!isMatch) {
-        throw new Error("Wrong email and password combination");
+        throw new Error('Wrong email and password combination');
       }
 
       if (!user.developer) {
         const canCompleteMFA = await this.auth.requireMFA(
           user.id,
-          req.headers["user-agent"] as string
+          req.headers['user-agent'] as string
         );
 
         const identityToken = this.auth.createIdentityToken(user.id);
@@ -173,19 +173,19 @@ export default class AuthController {
       }
 
       const session = await this.sessionAuth.createSession({
-        userAgent: req.headers["user-agent"] as string,
+        userAgent: req.headers['user-agent'] as string,
         userId: user.id,
       });
-      res.cookie("session", session.id, {
+      res.cookie('session', session.id, {
         sameSite: true,
         secure: true,
         maxAge: 2.628e9,
       });
       user.developer
-        ? res.redirect("/developer/dashboard")
-        : res.redirect("/dashboard");
+        ? res.redirect('/developer/dashboard')
+        : res.redirect('/dashboard');
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
       res.redirect(`${req.path}${this.toQueryParamString(req.query)}`);
     }
   }
@@ -200,10 +200,10 @@ export default class AuthController {
     } catch (error: any) {
       isValidSession = false;
     }
-    res.render("challenge", {
+    res.render('challenge', {
       page: {
         title: `Identity Challenge - ${AppConfig.appName}`,
-        description: "MFA challenge",
+        description: 'MFA challenge',
       },
       questions: secretQuestions,
       isValidSession,
@@ -227,13 +227,22 @@ export default class AuthController {
       });
 
       if (!userSecret) {
-        throw new UnknownUserError("Wrong identity combinantion");
+        throw new UnknownUserError('Wrong identity combinantion');
       }
 
       const isMatch = await compare(data.answer, userSecret.answer);
       if (!isMatch) {
-        throw new Error("Wrong identity combinantion");
+        throw new Error('Wrong identity combinantion');
       }
+
+      // create sesssion and redirect to dashboard
+      await UserDevice.findOrCreate({
+        where: { userId, userAgent: req.headers['user-agent'] },
+        defaults: {
+          userAgent: req.headers['user-agent'] as string,
+          userId,
+        },
+      });
 
       if (client) {
         const userApp = await UserApp.findOne({
@@ -264,28 +273,19 @@ export default class AuthController {
         );
       }
 
-      // create sesssion and redirect to dashboard
-      await UserDevice.findOrCreate({
-        where: { userId, userAgent: req.headers["user-agent"] },
-        defaults: {
-          userAgent: req.headers["user-agent"] as string,
-          userId,
-        },
-      });
-
       const session = await this.sessionAuth.createSession({
-        userAgent: req.headers["user-agent"] as string,
+        userAgent: req.headers['user-agent'] as string,
         userId,
       });
 
-      res.cookie("session", session.id, {
+      res.cookie('session', session.id, {
         sameSite: true,
         secure: true,
         maxAge: 2.628e9,
       });
-      res.redirect("/dashboard");
+      res.redirect('/dashboard');
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
       res.redirect(
         `/login/auth/identity/challenge${this.toQueryParamString({
           state,
@@ -319,10 +319,10 @@ export default class AuthController {
       isValidSession = false;
     }
 
-    res.render("consent", {
+    res.render('consent', {
       page: {
-        title: `Consent screen - ${AppConfig.appName}`,
-        description: "Allow app to get your profile",
+        title: `Consent - ${AppConfig.appName}`,
+        description: 'Allow app to get your public profile',
       },
       isValidSession,
       app: app?.toJSON(),
@@ -351,18 +351,18 @@ export default class AuthController {
         },
         app.secret
       );
-      res.redirect(`${app.redirectURL}?code=${accessToken}`);
+      res.redirect(307, `${app.redirectURL}?code=${accessToken}`);
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
       res.redirect(`/login/auth/consent${this.toQueryParamString(req.query)}`);
     }
   }
 
   async getRecoverAccountIdentityPage(req: Request, res: Response) {
-    res.render("recoverAccount", {
+    res.render('recoverAccount', {
       page: {
         title: `Recover account - ${AppConfig.appName}`,
-        description: "Account recovery",
+        description: 'Account recovery',
       },
     });
   }
@@ -371,7 +371,7 @@ export default class AuthController {
     try {
       const { email } = req.body;
       if (!email) {
-        throw new Error("Provide your account email");
+        throw new Error('Provide your account email');
       }
       const user = await this.userService.findUserBy({ email });
 
@@ -380,17 +380,17 @@ export default class AuthController {
         console.log(link);
         await this.sendAccountRecoveryEmail(user, link);
         req.flash(
-          "info",
-          "An account recovery email has been sent to your email"
+          'info',
+          'An account recovery email has been sent to your email'
         );
-        return res.redirect("/login/auth/recoverAccount/identity");
+        return res.redirect('/login/auth/recoverAccount/identity');
       } else {
         const token = this.auth.createIdentityToken(user.id);
         res.redirect(`/login/auth/recoverAccount/challenge?state=${token}`);
       }
     } catch (error: any) {
-      req.flash("error", error.message);
-      res.redirect("back");
+      req.flash('error', error.message);
+      res.redirect('back');
     }
   }
 
@@ -401,10 +401,10 @@ export default class AuthController {
     } catch (error) {
       isValidSession = false;
     }
-    res.render("challenge", {
+    res.render('challenge', {
       page: {
         title: `Recover account challenge - ${AppConfig.appName}`,
-        description: "Account recovery challenge",
+        description: 'Account recovery challenge',
       },
       isValidSession,
       questions: secretQuestions,
@@ -426,17 +426,17 @@ export default class AuthController {
       const isMatch = await compare(data.answer, secret.answer);
 
       if (!isMatch) {
-        throw new UnknownUserError("Wrong question and answer combination");
+        throw new UnknownUserError('Wrong question and answer combination');
       }
       const link = this.auth.generateRecoveryLink(req, user);
       await this.sendAccountRecoveryEmail(user, link);
       req.flash(
-        "info",
-        "An account recovery email has been sent to your email"
+        'info',
+        'An account recovery email has been sent to your email'
       );
-      res.redirect("/login/auth/recoverAccount/identity");
+      res.redirect('/login/auth/recoverAccount/identity');
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
       res.redirect(
         `/login/auth/recoverAccount/challenge${this.toQueryParamString({
           state: req.body.state,
@@ -455,10 +455,10 @@ export default class AuthController {
     } catch (error) {
       isValidSession = false;
     }
-    res.render("resetPassword", {
+    res.render('resetPassword', {
       page: {
         title: `Reset account password - ${AppConfig.appName}`,
-        description: "Reset account password",
+        description: 'Reset account password',
       },
       isValidSession,
       state: req.query.token,
@@ -475,15 +475,15 @@ export default class AuthController {
         userId: user,
         newPassword: data.newPassword,
       });
-      req.flash("info", "Password reset successfully");
+      req.flash('info', 'Password reset successfully');
       res.redirect(
         `/login${this.toQueryParamString({
           client: req.body.client,
         })}`
       );
     } catch (error: any) {
-      req.flash("error", error.message);
-      res.redirect("back");
+      req.flash('error', error.message);
+      res.redirect('back');
     }
   }
 }
