@@ -123,7 +123,7 @@ export default class AuthController {
     const session = req.cookies['session'];
 
     try {
-      res.cookie('session', '');
+      res.clearCookie('session');
       await this.auth.logout(session);
     } catch (error: any) {
       req.flash('error', error.message);
@@ -173,7 +173,7 @@ export default class AuthController {
         userId: user.id,
       });
       res.cookie('session', session.id, {
-        sameSite: true,
+        sameSite: 'strict',
         secure: true,
         maxAge: 2.628e9,
       });
@@ -347,7 +347,8 @@ export default class AuthController {
         },
         app.secret
       );
-      res.redirect(307, `${app.redirectURL}?code=${accessToken}`);
+
+      res.redirect(`${app.redirectURL}?code=${accessToken}`);
     } catch (error: any) {
       req.flash('error', error.message);
       res.redirect(`/login/auth/consent${toQueryParamString(req.query)}`);
