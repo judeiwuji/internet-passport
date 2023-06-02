@@ -14,7 +14,7 @@ export default class VerificationController {
   getVerifyEmailPage(req: Request, res: Response) {
     const state = req.query.state as string;
     let isStateValid = true;
-    let jwtData;
+    let jwtData: any = {};
 
     try {
       jwtData = JWTUtil.verify({ token: state });
@@ -33,6 +33,7 @@ export default class VerificationController {
       isStateValid,
       data: jwtData ? jwtData : {},
       state,
+      email: jwtData.email,
     });
   }
 

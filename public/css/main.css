@@ -172,6 +172,8 @@ a.link:hover {
   border: 0;
   transition: all ease-in 0.3s;
   box-shadow: 0px 1px 0.2rem #888888;
+  text-decoration: none;
+  color: #4e4e4e;
 }
 
 .app-card .card-body {
@@ -181,6 +183,8 @@ a.link:hover {
 
 .app-card:hover {
   background-color: #fafafa;
+  text-decoration: none;
+  color: #4e4e4e;
 }
 /* app-card */
 
