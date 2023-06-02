@@ -1,14 +1,14 @@
-import { Request, Response } from "express";
-import validateSchema from "../validators/validatorSchema";
+import { Request, Response } from 'express';
+import validateSchema from '../validators/validatorSchema';
 import {
   ClientAppCreationSchema,
   ClientAppUpdateSchema,
-} from "../validators/schemas/ClientAppSchema";
-import ClientAppService from "../services/ClientAppService";
-import IRequest from "../models/interfaces/IRequest";
-import Developer from "../models/Developer";
-import ClientApp from "../models/ClientApp";
-import AppConfig from "../config/appConfig";
+} from '../validators/schemas/ClientAppSchema';
+import ClientAppService from '../services/ClientAppService';
+import IRequest from '../models/interfaces/IRequest';
+import Developer from '../models/Developer';
+import ClientApp from '../models/ClientApp';
+import AppConfig from '../config/appConfig';
 
 export default class ClientAppController {
   private clientAppService = new ClientAppService();
@@ -19,11 +19,11 @@ export default class ClientAppController {
         data,
         req.user?.developer as Developer
       );
-      req.flash("info", "App created");
+      req.flash('info', 'App created');
       res.redirect(`/client/apps/${app.id}`);
     } catch (error: any) {
-      req.flash("error", error.message);
-      res.redirect("/developer/dashboard?tab=createApp");
+      req.flash('error', error.message);
+      res.redirect('/developer/dashboard?tab=createApp');
     }
   }
 
@@ -40,10 +40,20 @@ export default class ClientAppController {
     const { id } = req.params;
     let app: any | null = null;
     let error: any;
+    const domain = `${req.protocol}://${req.headers.host}`;
 
     try {
       app = (await this.clientAppService.findAppBy({ id })).toJSON();
-      res.render("developer/applicationDetails", {
+      const loginScript = `
+      <form action="${domain}/login" method="get">
+          <p>Use your internet passport to login</p>
+          <input type="hidden" name="client" id="${app.id}"/>
+          <button style="border: 0; outline: 0; background-color: #f50057; padding: 0.75rem; color: #fff; border-radius: 8px">
+              Internet Passport
+          </button>
+      </form>
+      `;
+      res.render('developer/applicationDetails', {
         page: {
           title: `${app.name} - ${AppConfig.appName}`,
           description: `manage ${app.name}`,
@@ -53,9 +63,11 @@ export default class ClientAppController {
         isDeveloper: req.user && req.user.developer,
         app,
         error,
+        domain,
+        loginScript,
       });
     } catch (err: any) {
-      res.redirect("/notfound");
+      res.redirect('/notfound');
     }
   }
 
@@ -66,12 +78,12 @@ export default class ClientAppController {
       const data = await validateSchema(ClientAppUpdateSchema, req.body);
       const updated = await this.clientAppService.updateApp(data, id);
       req.flash(
-        updated ? "info" : "error",
-        updated ? "App updated" : "Failed to update"
+        updated ? 'info' : 'error',
+        updated ? 'App updated' : 'Failed to update'
       );
       res.redirect(`/client/apps/${id}`);
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
       res.redirect(`/client/apps/${id}`);
     }
   }
@@ -83,10 +95,10 @@ export default class ClientAppController {
         id,
         req.user?.developer as Developer
       );
-      req.flash("info", "App deleted");
+      req.flash('info', 'App deleted');
       res.redirect(`/developer/dashboard`);
     } catch (error: any) {
-      req.flash("error", error.message);
+      req.flash('error', error.message);
       res.redirect(`/client/apps/${id}`);
     }
   }

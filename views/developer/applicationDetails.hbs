@@ -101,16 +101,41 @@
 
 {{!-- Install instruction --}}
 <div class="modal fade" id="howToInstallApp">
-    <div class="modal-dialog">
+    <div class="modal-dialog rounded-modal">
         <div class="modal-content">
             <div class="modal-header">
+                <h5 class="modal-title">
+                    How to install
+                </h5>
                 <a href="javascript: void(0)" class="close" data-dismiss="modal">
                     &times;
                 </a>
             </div>
 
             <div class="modal-body">
-                <h5>How to install Internet Passport in your website</h5>
+                <ul>
+                    <li>
+                        Copy the code below and paste it in your website login page
+                        <div class="card rounded-card bg-light my-3">
+                            <div class="card-body">
+                                {{loginScript}}
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        Create this <code>{{app.redirectURL}}</code> route in your website
+                    </li>
+                    <li>
+                        On successful login you will receive an
+                        authorization code In this <code>{{app.redirectURL}}</code> route.
+                    </li>
+                    <li>
+                        Use the authorization code to request for the user public profile at this endpoint
+                        <code>{{domain}}/users/public/profile</code>
+                    </li>
+                    <li>Ready...Go!</li>
+                </ul>
+
             </div>
         </div>
     </div>
