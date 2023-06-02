@@ -18,28 +18,15 @@ developerRouter.get(
   ensureVerified,
   developerController.getProfile
 );
-developerRouter.get(
-  '/login',
-  ensureAuthenticated,
-  ensureVerified,
-  developerController.getLoginPage
-);
-developerRouter.get(
-  '/signup',
-  ensureAuthenticated,
-  ensureVerified,
-  developerController.getSignupPage
-);
-developerRouter.post(
-  '/signup',
-  ensureAuthenticated,
-  ensureVerified,
-  (req, res) => developerController.signup(req, res)
-);
 developerRouter.put(
   '/profile',
   ensureAuthenticated,
   ensureVerified,
   (req, res) => developerController.updateProfile(req, res)
+);
+developerRouter.get('/login', developerController.getLoginPage);
+developerRouter.get('/signup', developerController.getSignupPage);
+developerRouter.post('/signup', (req, res) =>
+  developerController.signup(req, res)
 );
 export default developerRouter;
