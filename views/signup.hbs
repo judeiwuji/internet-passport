@@ -80,11 +80,66 @@
 
                                 <div class="row mb-5">
                                     <div class="col-12 col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password"
-                                            class="form-control {{#if (equals error.path 'password')}}border-danger{{/if}}"
-                                            {{#if (equals error.path 'password' )}}data-title="Provide your password"
-                                            {{/if}} data-toggle="tooltip" name="password" placeholder="Password"
-                                            id="password">
+                                        <div class="input-group">
+                                            <input type="password"
+                                                class="form-control {{#if (equals error.path 'password')}}border-danger{{/if}}"
+                                                {{#if (equals error.path 'password'
+                                                )}}data-title="Provide your password" {{/if}} data-toggle="tooltip"
+                                                name="password" placeholder="Password" id="password">
+                                            {{!-- <span class="input-group-append">
+                                                <button class="btn btn-outline-secondary">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                            </span> --}}
+                                        </div>
+                                        <div class="card card-rounded bg-light d-none">
+                                            <div class="card-body">
+                                                <h6 class="text-muted small">Password requirements</h6>
+                                                <ul class="m-0 list-unstyled pwd-requirements">
+                                                    <li id="pwd_len">
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        <i class="fas fa-times mr-1"></i>
+                                                        <span>It must have at least 8 characters</span>
+                                                    </li>
+                                                    <li id="pwd_upper">
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        <i class="fas fa-times mr-1"></i>
+                                                        <span>It must have at least one uppercase character
+                                                            <span class="badge badge-dark">
+                                                                A-Z
+                                                            </span></span>
+                                                    </li>
+                                                    <li id="pwd_lower">
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        <i class="fas fa-times mr-1"></i>
+                                                        <span>It must have at least one lowercase character
+                                                            <span class="badge badge-dark">
+                                                                a-z
+                                                            </span>
+                                                        </span>
+                                                    </li>
+                                                    <li id="pwd_digit">
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        <i class="fas fa-times mr-1"></i>
+                                                        <span>It must have at least one digit
+                                                            <span class="badge badge-dark">
+                                                                0-9
+                                                            </span>
+                                                        </span>
+                                                    </li>
+                                                    <li id="pwd_special">
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        <i class="fas fa-times mr-1"></i>
+                                                        <span>
+                                                            It must have at least one special character
+                                                            <span class="badge badge-dark">
+                                                                !@#$%^&*()
+                                                            </span>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-12 col-sm-6">
                                         <input type="password"
@@ -106,7 +161,9 @@
 
                             {{!-- Login --}}
                             <form action="/login" class="d-none">
+                                {{#if client}}
                                 <input type="hidden" name="client" value="{{client}}">
+                                {{/if}}
                                 <button type="submit" id="loginForm">
                                     Log in instead
                                 </button>

@@ -43,7 +43,9 @@
 
                         {{!-- Signup --}}
                         <form action="/signup" class="d-none">
+                            {{#if client}}
                             <input type="hidden" name="client" value="{{client}}">
+                            {{/if}}
                             <button type="submit" class="link" id="signupForm">
                                 Create account
                             </button>
