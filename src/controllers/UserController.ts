@@ -8,7 +8,7 @@ import {
   UserUpdateSchema,
 } from '../validators/schemas/UserSchema';
 import UserService from '../services/UserService';
-import JWTUtil from '../utils/JWTUtils';
+import JWTUtil from '../utils/JWTUtil';
 import AppConfig from '../config/appConfig';
 
 export default class UserController {

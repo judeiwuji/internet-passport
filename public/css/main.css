@@ -1,7 +1,7 @@
 body {
   text-rendering: optimizeLegibility;
   font-size: 16px;
-  font-family: "Poppins", Verdana, Geneva, Tahoma, sans-serif;
+  font-family: 'Poppins', Verdana, Geneva, Tahoma, sans-serif;
   background-color: #ececec;
   scroll-behavior: smooth;
 }
@@ -215,6 +215,23 @@ a.link:hover {
 .table-wrapper table {
   min-width: 1000px;
 }
+
+.link {
+  display: inline-block;
+  border: 0;
+  outline: 0;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 @media screen and (max-width: 991px) {
   .banner {
     padding: 5rem;

@@ -32,14 +32,23 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                <a href="/signup">
+                                <label for="signupForm" class="link">
                                     Create account
-                                </a>
+                                </label>
                                 <button type="submit" class="btn btn-full">
                                     Login
                                 </button>
                             </div>
                         </form>
+
+                        {{!-- Signup --}}
+                        <form action="/signup" class="d-none">
+                            <input type="hidden" name="client" value="{{client}}">
+                            <button type="submit" class="link" id="signupForm">
+                                Create account
+                            </button>
+                        </form>
+                        {{!-- Signup --}}
                     </div>
                 </div>
             </div>

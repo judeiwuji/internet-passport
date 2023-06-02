@@ -6,14 +6,16 @@
                     <div class="card-header py-1 bg-white">
                         <div class="d-flex align-items-center">
                             <img src="/imgs/logo.png" alt="Logo" class="logo-sm mr-1" />
-                            <p class="m-0 small">{{appName}}</p>
+                            <p class="m-0 small font-weight-bold">{{appName}}</p>
                         </div>
                     </div>
                     <div class="card-body">
                         {{> flashMessage}}
                         {{#if isValidSession}}
                         <div class="text-center mb-4">
-                            <h5>Allow <strong>{{app.name}}</strong> to connect to your public profile?</h5>
+                            <h6 class="mb-4">
+                                Allow <strong>{{app.name}}</strong> to connect to your public profile?
+                            </h6>
                             <p class="text-muted small">{{app.name}} will have access to your public profile data</p>
                         </div>
                         {{else}}

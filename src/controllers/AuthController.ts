@@ -7,7 +7,7 @@ import validateSchema from '../validators/validatorSchema';
 import LoginSchema from '../validators/schemas/LoginSchema';
 import UserService from '../services/UserService';
 import { compare } from 'bcryptjs';
-import JWTUtil from '../utils/JWTUtils';
+import JWTUtil from '../utils/JWTUtil';
 import secretQuestions from '../data/secretQuestions';
 import {
   AppConsentSchema,
@@ -24,23 +24,17 @@ import NodemailerUtils from '../utils/NodemailerUtils';
 import moment from 'moment';
 import User from '../models/User';
 import AppConfig from '../config/appConfig';
+import toQueryParamString from '../helpers/toQueryParamString';
+import VerificationService from '../services/VerificationService';
+import { config } from 'dotenv';
+config();
 
 export default class AuthController {
   private auth = new SessionAuth();
   private userService = new UserService();
   private sessionAuth = new SessionAuth();
   private clientAppService = new ClientAppService();
-
-  toQueryParamString(query: any) {
-    let converted = '';
-
-    for (const [k, v] of Object.entries(query)) {
-      if (v) {
-        converted += converted ? `&${k}=${v}` : `${k}=${v}`;
-      }
-    }
-    return converted ? `?${converted}` : '';
-  }
+  private verificationService = new VerificationService();
 
   async sendAccountRecoveryEmail(user: User, link: string) {
     const mailer = new NodemailerUtils();
@@ -154,21 +148,23 @@ export default class AuthController {
 
         const identityToken = this.auth.createIdentityToken(user.id);
         if (canCompleteMFA) {
-          return res.redirect(
-            `/login/auth/identity/challenge${this.toQueryParamString({
+          res.redirect(
+            `/login/auth/identity/challenge${toQueryParamString({
               state: identityToken,
               client: req.query.client,
             })}`
           );
+          return;
         }
 
         if (req.query.client) {
-          return res.redirect(
-            `/login/auth/consent${this.toQueryParamString({
+          res.redirect(
+            `/login/auth/consent${toQueryParamString({
               state: identityToken,
               client: req.query.client,
             })}`
           );
+          return;
         }
       }
 
@@ -186,7 +182,7 @@ export default class AuthController {
         : res.redirect('/dashboard');
     } catch (error: any) {
       req.flash('error', error.message);
-      res.redirect(`${req.path}${this.toQueryParamString(req.query)}`);
+      res.redirect(`${req.path}${toQueryParamString(req.query)}`);
     }
   }
 
@@ -287,7 +283,7 @@ export default class AuthController {
     } catch (error: any) {
       req.flash('error', error.message);
       res.redirect(
-        `/login/auth/identity/challenge${this.toQueryParamString({
+        `/login/auth/identity/challenge${toQueryParamString({
           state,
           client,
         })}`
@@ -354,7 +350,7 @@ export default class AuthController {
       res.redirect(307, `${app.redirectURL}?code=${accessToken}`);
     } catch (error: any) {
       req.flash('error', error.message);
-      res.redirect(`/login/auth/consent${this.toQueryParamString(req.query)}`);
+      res.redirect(`/login/auth/consent${toQueryParamString(req.query)}`);
     }
   }
 
@@ -438,7 +434,7 @@ export default class AuthController {
     } catch (error: any) {
       req.flash('error', error.message);
       res.redirect(
-        `/login/auth/recoverAccount/challenge${this.toQueryParamString({
+        `/login/auth/recoverAccount/challenge${toQueryParamString({
           state: req.body.state,
           client: req.body.client,
         })}`
@@ -477,7 +473,7 @@ export default class AuthController {
       });
       req.flash('info', 'Password reset successfully');
       res.redirect(
-        `/login${this.toQueryParamString({
+        `/login${toQueryParamString({
           client: req.body.client,
         })}`
       );
