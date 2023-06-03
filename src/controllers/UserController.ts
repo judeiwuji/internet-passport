@@ -3,7 +3,6 @@ import IRequest from '../models/interfaces/IRequest';
 import secretQuestions from '../data/secretQuestions';
 import validateSchema from '../validators/validatorSchema';
 import {
-  UserPublicProfileRequest,
   UserSecretUpdateSchema,
   UserUpdateSchema,
 } from '../validators/schemas/UserSchema';

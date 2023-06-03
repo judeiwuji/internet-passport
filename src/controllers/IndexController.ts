@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import UserService from '../services/UserService';
 import validateSchema from '../validators/validatorSchema';
 import { UserCreationSchema } from '../validators/schemas/UserSchema';
-import JWTUtil from '../utils/JWTUtil';
 import secretQuestions from '../data/secretQuestions';
 import VerificationService from '../services/VerificationService';
 import IRequest from '../models/interfaces/IRequest';

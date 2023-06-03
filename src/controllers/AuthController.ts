@@ -20,13 +20,11 @@ import UserApp from '../models/UserApp';
 import ClientApp from '../models/ClientApp';
 import UserDevice from '../models/UserDevice';
 import ClientAppService from '../services/ClientAppService';
-import NodemailerUtils from '../utils/NodemailerUtils';
-import moment from 'moment';
 import User from '../models/User';
 import AppConfig from '../config/appConfig';
 import toQueryParamString from '../helpers/toQueryParamString';
-import VerificationService from '../services/VerificationService';
 import { config } from 'dotenv';
+import MailService from '../services/MailService';
 config();
 
 export default class AuthController {
@@ -34,36 +32,7 @@ export default class AuthController {
   private userService = new UserService();
   private sessionAuth = new SessionAuth();
   private clientAppService = new ClientAppService();
-  private verificationService = new VerificationService();
-
-  async sendAccountRecoveryEmail(user: User, link: string) {
-    const mailer = new NodemailerUtils();
-    return mailer.send({
-      html: `
-    <h1 style="font-weight: 700; font-size: 1.5rem">${AppConfig.appName}</h1>
-    <br>
-    <br>
-    <p>Hi <strong>${user.firstname}</strong>, someone tried to reset your password.
-    If you are the one, please click on the link below, else you can ignore this
-    mail.</p>
-    <br/>
-    <br/>
-    <a href="${link}">${link}</a>
-    <p>
-      <strong>Note:</strong>
-      This link will expire in 15 minutes.
-    </p>
-    <br/>
-    <br/>
-    <p style="text-align: center">
-      <strong>${AppConfig.appName}</strong>
-    </p>
-    `,
-      text: '',
-      to: user.email,
-      subject: `${AppConfig.appName} Account Recovery`,
-    });
-  }
+  private mailService = new MailService();
 
   async changePassword(req: IRequest, res: Response) {
     const user = req.user;
@@ -75,38 +44,13 @@ export default class AuthController {
       data.userId = user?.id as string;
 
       const updated = await this.auth.updateUserPassword(data);
-      const mailer = new NodemailerUtils();
       const link = this.auth.generateRecoveryLink(req, user as User);
-      mailer
-        .send({
-          to: user?.email,
-          html: `
-        hi ${user?.firstname} ${
-            user?.lastname
-          }, we wish to let you know that your passsword was changed at ${moment().format(
-            'LLL'
-          )}.
-        <p>
-        If your are not the one that made this changes please click the link below to create a new
-        strong password.
-        </p>
-        <br>
-        <a href="${link}">${link}</a>
-        <br>
-        <p><b>Note: </b>This link expires in 15 minutes</p> 
-        <br>
-        <br>
-        <p style="text-align: center; font-size: 0.8rem"><strong>${
-          AppConfig.appName
-        }</strong></p>
-        `,
-        })
-        .then((info) => {
-          console.log(info);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.mailService.changePasswordNotification(
+        user as User,
+        link,
+        req.headers['user-agent'] as string,
+        req.ip
+      );
       req.flash(
         updated ? 'info' : 'error',
         updated ? 'Password changed successfully' : 'Failed to change password'
@@ -139,6 +83,14 @@ export default class AuthController {
       if (!isMatch) {
         throw new Error('Wrong email and password combination');
       }
+      // login notification
+      const link = this.auth.generateRecoveryLink(req, user);
+      this.mailService.loginNotification(
+        user,
+        link,
+        req.headers['user-agent'] as string,
+        req.ip
+      );
 
       if (!user.developer) {
         const canCompleteMFA = await this.auth.requireMFA(
@@ -375,8 +327,7 @@ export default class AuthController {
 
       if (user.developer) {
         const link = this.auth.generateRecoveryLink(req, user);
-        console.log(link);
-        await this.sendAccountRecoveryEmail(user, link);
+        this.mailService.accountRecovery(user, link);
         req.flash(
           'info',
           'An account recovery email has been sent to your email'
@@ -427,7 +378,7 @@ export default class AuthController {
         throw new UnknownUserError('Wrong question and answer combination');
       }
       const link = this.auth.generateRecoveryLink(req, user);
-      await this.sendAccountRecoveryEmail(user, link);
+      this.mailService.accountRecovery(user, link);
       req.flash(
         'info',
         'An account recovery email has been sent to your email'
