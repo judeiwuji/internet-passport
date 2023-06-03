@@ -92,6 +92,12 @@ export default class AuthController {
         req.ip
       );
 
+      // update last login
+      await this.userService.updateDevice(
+        user,
+        req.headers['user-agent'] as string
+      );
+
       if (!user.developer) {
         const canCompleteMFA = await this.auth.requireMFA(
           user.id,
@@ -134,7 +140,7 @@ export default class AuthController {
         : res.redirect('/dashboard');
     } catch (error: any) {
       req.flash('error', error.message);
-      res.redirect(`${req.path}${toQueryParamString(req.query)}`);
+      res.redirect(`back`);
     }
   }
 

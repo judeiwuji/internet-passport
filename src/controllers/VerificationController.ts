@@ -49,10 +49,7 @@ export default class VerificationController {
           email: jwtData.email,
         });
         await user.set('verified', true).save();
-        this.userService.addUserDevice(
-          user,
-          req.headers['user-agent'] as string
-        );
+        this.userService.addDevice(user, req.headers['user-agent'] as string);
 
         if (req.query.client) {
           const identityToken = this.auth.createIdentityToken(user.id);

@@ -125,7 +125,7 @@ export default class UserService {
 
     const devices = await UserDevice.findAll({
       where: { userId },
-      order: [['createdAt', 'DESC']],
+      order: [['updatedAt', 'DESC']],
     });
     return devices.map((d) => {
       const data = detector.detect(d.userAgent);
@@ -190,11 +190,24 @@ export default class UserService {
     return userSecret;
   }
 
-  async addUserDevice(user: User, userAgent: string) {
+  async addDevice(user: User, userAgent: string) {
     const [device, found] = await UserDevice.findOrCreate({
-      where: { userId: user.id },
+      where: { userId: user.id, userAgent },
       defaults: { userAgent, userId: user.id },
     });
     return device;
+  }
+
+  async updateDevice(user: User, userAgent: string) {
+    const device = await UserDevice.findOne({
+      where: { userId: user.id, userAgent },
+    });
+
+    if (device) {
+      device.changed('userAgent', true);
+      await device.set('userAgent', userAgent).save();
+      return true;
+    }
+    return false;
   }
 }
