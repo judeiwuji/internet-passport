@@ -1,53 +1,45 @@
-function computePasswordStrength(totalPassed, totalTests) {
-  const strength = (totalPassed / totalTests) * 100;
-  const pwdStrength = $('#pwd_strength');
-  const label = $('#pwd_strength_label');
-  pwdStrength.css({ width: strength + '%' });
-
-  if (strength <= 25) {
-    pwdStrength.css({ backgroundColor: 'red' });
-    label.text('Weak');
-  } else if (strength <= 50) {
-    pwdStrength.css({ backgroundColor: '#fbc531' });
-    label.text('Good');
-  } else if (strength <= 75) {
-    pwdStrength.css({ backgroundColor: 'yellow' });
-    label.text('Better');
-  } else if (strength <= 80) {
-    pwdStrength.css({ backgroundColor: '#4cd137' });
-    label.text('Almost there');
-  } else {
-    pwdStrength.css({ backgroundColor: '#44bd32' });
-    label.text('Strong');
-  }
-}
-
 function validatePassword() {
-  $('#passwordRequirements').collapse('show');
   const password = $('#password').val();
+  const firstname = $('#firstname').val();
+  const lastname = $('#lastname').val();
   let isValid = true;
-  let passed = 0;
+
   const tests = [
-    { pass: password.length >= 8, target: '#pwd_len' },
-    { pass: /[A-Z]{1,}/.test(password), target: '#pwd_upper' },
-    { pass: /[a-z]{1,}/.test(password), target: '#pwd_lower' },
-    { pass: /[0-9]{1,}/.test(password), target: '#pwd_digit' },
+    { pass: password.length >= 8, target: '#pwdReqlen' },
     {
-      pass: /[~!@#$%^&*()_+=?/\\|]{1,}/.test(password),
-      target: '#pwd_special',
+      pass: !password.includes(firstname) && !password.includes(lastname),
+      target: '#pwdReqName',
     },
   ];
 
   for (const test of tests) {
+    const target = $(test.target);
     if (test.pass) {
-      toggleClass($(test.target), 'error', 'success');
-      passed += 1;
+      target.removeClass('text-danger');
+      target.addClass('text-success');
     } else {
-      toggleClass($(test.target), 'success', 'error');
+      target.removeClass('text-success');
+      target.addClass('text-danger');
       isValid = false;
     }
   }
-  computePasswordStrength(passed, tests.length);
+  if (isValid) {
+    $('#passwordRequirements').collapse('hide');
+  } else {
+    $('#passwordRequirements').collapse('show');
+  }
+  return isValid;
+}
+
+function validateConfirmPassword() {
+  const password = $('#password').val();
+  const confirmPassword = $('#confirmPassword').val();
+  let isValid = password === confirmPassword;
+  if (isValid) {
+    $('#confirmPassword').removeClass('border-danger');
+  } else {
+    $('#confirmPassword').addClass('border-danger');
+  }
   return isValid;
 }
 
@@ -75,5 +67,13 @@ $(function () {
 
   $('#password').on('keyup', function (event) {
     validatePassword();
+  });
+
+  $('#confirmPassword').on('keyup', function (event) {
+    validateConfirmPassword();
+  });
+
+  $('#signupForm').on('submit', function (event) {
+    return validatePassword() && validateConfirmPassword();
   });
 });

@@ -38,8 +38,6 @@ export default class VerificationController {
   }
 
   async verifyEmail(req: Request, res: Response) {
-    console.log(req.body);
-
     try {
       const code = parseInt(req.body['codes'].join(''));
       const jwtData = JWTUtil.verify({ token: req.body.state });
@@ -51,6 +49,10 @@ export default class VerificationController {
           email: jwtData.email,
         });
         await user.set('verified', true).save();
+        this.userService.addUserDevice(
+          user,
+          req.headers['user-agent'] as string
+        );
 
         if (req.query.client) {
           const identityToken = this.auth.createIdentityToken(user.id);
