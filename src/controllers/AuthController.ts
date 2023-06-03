@@ -49,7 +49,7 @@ export default class AuthController {
         user as User,
         link,
         req.headers['user-agent'] as string,
-        req.ip
+        req.socket.remoteAddress as string
       );
       req.flash(
         updated ? 'info' : 'error',
@@ -89,7 +89,7 @@ export default class AuthController {
         user,
         link,
         req.headers['user-agent'] as string,
-        req.ip
+        req.socket.remoteAddress as string
       );
 
       // update last login

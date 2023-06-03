@@ -18,7 +18,7 @@ export default function LoginNotificationMailTemplate(
 <p>Hello ${user.firstname}</p>
 <p>
 We noticed a new login to your account using 
-${device.client.name} on ${device.os.platform} from ${ip} at ${date}
+${device.client.name} on ${device.os.name} from ${ip} at ${date}
 </p>
 <p>
 I you logged in recently, no need to worry and you can disregard this message.

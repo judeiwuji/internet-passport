@@ -15,7 +15,7 @@ export default function ChangePasswordNotificationMailTemplate(
   return `<p>Hello ${user?.firstname},</p>
 <p>
 We noticed that your passsword was changed using ${device.client.name} 
-on ${device.os.platform} from ${ip} at ${date}.
+on ${device.os.name} from ${ip} at ${date}.
 </p>
 
 <p>
