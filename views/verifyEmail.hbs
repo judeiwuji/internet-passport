@@ -27,12 +27,13 @@
                             <input type="hidden" name="state" value="{{state}}">
 
                             <div class="d-flex justify-content-center code-digit-pane mb-4">
-                                <input type="text" class="form-control" name="codes" maxlength="1" tabindex="1">
-                                <input type="text" class="form-control" name="codes" maxlength="1" tabindex="1">
-                                <input type="text" class="form-control" name="codes" maxlength="1" tabindex="1">
-                                <input type="text" class="form-control" name="codes" maxlength="1" tabindex="1">
-                                <input type="text" class="form-control" name="codes" maxlength="1" tabindex="1">
-                                <input type="text" class="form-control" name="codes" maxlength="1" tabindex="1">
+                                <input type="text" class="form-control otpCode" name="codes" maxlength="1" tabindex="1"
+                                    autofocus="true">
+                                <input type="text" class="form-control otpCode" name="codes" maxlength="1" tabindex="1">
+                                <input type="text" class="form-control otpCode" name="codes" maxlength="1" tabindex="1">
+                                <input type="text" class="form-control otpCode" name="codes" maxlength="1" tabindex="1">
+                                <input type="text" class="form-control otpCode" name="codes" maxlength="1" tabindex="1">
+                                <input type="text" class="form-control otpCode" name="codes" maxlength="1" tabindex="1">
                             </div>
 
                             <div class="text-center">
@@ -65,3 +66,5 @@
         </div>
     </div>
 </div>
+
+<script defer src="/js/verifyToken.js"></script>
