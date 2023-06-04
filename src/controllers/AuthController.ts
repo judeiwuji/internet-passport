@@ -26,6 +26,7 @@ import toQueryParamString from '../helpers/toQueryParamString';
 import { config } from 'dotenv';
 import MailService from '../services/MailService';
 import getIPAddress from '../helpers/getIPAddress';
+import VerificationService from '../services/VerificationService';
 config();
 
 export default class AuthController {
@@ -33,6 +34,7 @@ export default class AuthController {
   private userService = new UserService();
   private clientAppService = new ClientAppService();
   private mailService = new MailService();
+  private verificationService = new VerificationService();
 
   async changePassword(req: IRequest, res: Response) {
     const user = req.user;
@@ -98,14 +100,28 @@ export default class AuthController {
         req.headers['user-agent'] as string
       );
 
-      if (!user.developer) {
-        const canCompleteMFA = await this.auth.requireMFA(
-          user.id,
-          req.headers['user-agent'] as string
-        );
+      const canCompleteMFA = await this.auth.requireMFA(
+        user.id,
+        req.headers['user-agent'] as string
+      );
+      const identityToken = this.auth.createIdentityToken(user.id);
 
-        const identityToken = this.auth.createIdentityToken(user.id);
-        if (canCompleteMFA) {
+      if (canCompleteMFA) {
+        if (user.developer) {
+          const code = this.verificationService.generateCode();
+          const token = this.verificationService.generateToken(
+            user.email,
+            code
+          );
+          this.verificationService.sendOTP(user, code);
+          res.redirect(
+            `/verifyOTP${toQueryParamString({
+              state: token,
+              client: req.query.client,
+            })}`
+          );
+          return;
+        } else {
           res.redirect(
             `/login/auth/identity/challenge${toQueryParamString({
               state: identityToken,
@@ -114,16 +130,16 @@ export default class AuthController {
           );
           return;
         }
+      }
 
-        if (req.query.client) {
-          res.redirect(
-            `/login/auth/consent${toQueryParamString({
-              state: identityToken,
-              client: req.query.client,
-            })}`
-          );
-          return;
-        }
+      if (!user.developer && req.query.client) {
+        res.redirect(
+          `/login/auth/consent${toQueryParamString({
+            state: identityToken,
+            client: req.query.client,
+          })}`
+        );
+        return;
       }
 
       const session = await this.auth.createSession({

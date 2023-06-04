@@ -1,5 +1,6 @@
 import AppConfig from '../config/appConfig';
 import User from '../models/User';
+import AccountOTPMailTemplate from '../templates/mail/AccountOTPMailTemplate';
 import AccountRecoveryMailTemplate from '../templates/mail/AccountRecoveryMailTemplate';
 import AccountVerificationMailTemplate from '../templates/mail/AccountVerificationMailTemplate';
 import ChangePasswordNotificationMailTemplate from '../templates/mail/ChangePasswordNotificationMailTemplate';
@@ -48,6 +49,14 @@ export default class MailService {
       html: ChangePasswordNotificationMailTemplate(user, link, userAgent, ip),
       to: user.email,
       subject: `New Login - ${AppConfig.appName}`,
+    });
+  }
+
+  async accountOTP(user: User, code: number) {
+    return this.mailer.send({
+      html: AccountOTPMailTemplate(user, code),
+      to: user.email,
+      subject: `${AppConfig.appName} OTP`,
     });
   }
 }
