@@ -31,7 +31,6 @@ config();
 export default class AuthController {
   private auth = new SessionAuth();
   private userService = new UserService();
-  private sessionAuth = new SessionAuth();
   private clientAppService = new ClientAppService();
   private mailService = new MailService();
 
@@ -127,7 +126,7 @@ export default class AuthController {
         }
       }
 
-      const session = await this.sessionAuth.createSession({
+      const session = await this.auth.createSession({
         userAgent: req.headers['user-agent'] as string,
         userId: user.id,
       });
@@ -177,27 +176,22 @@ export default class AuthController {
         token: data.state,
       });
       const userId = jwtData.user;
-      const userSecret = await UserSecret.findOne({
-        where: { userId, question: data.question },
+      const user = await this.userService.findUserBy({ id: userId });
+      const userSecret = await this.userService.findSecretBy({
+        userId,
+        question: data.question,
       });
-
-      if (!userSecret) {
-        throw new UnknownUserError('Wrong identity combinantion');
-      }
 
       const isMatch = await compare(data.answer, userSecret.answer);
       if (!isMatch) {
-        throw new Error('Wrong identity combinantion');
+        throw new Error('Wrong secret combinantion');
       }
 
       // create sesssion and redirect to dashboard
-      await UserDevice.findOrCreate({
-        where: { userId, userAgent: req.headers['user-agent'] },
-        defaults: {
-          userAgent: req.headers['user-agent'] as string,
-          userId,
-        },
-      });
+      await this.userService.addDevice(
+        user,
+        req.headers['user-agent'] as string
+      );
 
       if (client) {
         const userApp = await UserApp.findOne({
@@ -228,7 +222,7 @@ export default class AuthController {
         );
       }
 
-      const session = await this.sessionAuth.createSession({
+      const session = await this.auth.createSession({
         userAgent: req.headers['user-agent'] as string,
         userId,
       });
