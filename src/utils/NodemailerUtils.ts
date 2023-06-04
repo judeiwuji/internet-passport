@@ -21,7 +21,7 @@ export default class NodemailerUtils {
   }
 
   async send(options: Mail.Options) {
-    options.from = `${process.env['MAIL_USER']}`;
+    options.from = `"Internet Passport" <${process.env['MAIL_USER']}>`;
     try {
       await this.smtp.sendMail(options);
       return true;
