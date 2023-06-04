@@ -25,6 +25,7 @@ import AppConfig from '../config/appConfig';
 import toQueryParamString from '../helpers/toQueryParamString';
 import { config } from 'dotenv';
 import MailService from '../services/MailService';
+import getIPAddress from '../helpers/getIPAddress';
 config();
 
 export default class AuthController {
@@ -49,7 +50,7 @@ export default class AuthController {
         user as User,
         link,
         req.headers['user-agent'] as string,
-        req.socket.remoteAddress as string
+        getIPAddress(req) as string
       );
       req.flash(
         updated ? 'info' : 'error',
@@ -89,7 +90,7 @@ export default class AuthController {
         user,
         link,
         req.headers['user-agent'] as string,
-        req.socket.remoteAddress as string
+        getIPAddress(req) as string
       );
 
       // update last login
