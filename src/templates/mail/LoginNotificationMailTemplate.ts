@@ -21,7 +21,7 @@ We noticed a new login to your account using
 ${device.client.name} on ${device.os.name} from ${ip} at ${date}
 </p>
 <p>
-I you logged in recently, no need to worry and you can disregard this message.
+If you logged in recently, no need to worry and you can disregard this message.
 </p>
 
 <p>

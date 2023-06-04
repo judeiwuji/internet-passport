@@ -15,6 +15,7 @@ export default class IndexController {
   private verificationService = new VerificationService();
 
   getHomePage(req: IRequest, res: Response) {
+    console.log(req.headers['x-forwarded-for']);
     res.render('index', {
       page: {
         title: `${AppConfig.appName}`,
