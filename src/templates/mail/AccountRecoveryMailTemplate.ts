@@ -5,11 +5,11 @@ export default function AccountRecoveryMailTemplate(user: User, link: string) {
   return `
     <h1 style="font-weight: 700; font-size: 1.5rem">${AppConfig.appName}</h1>
     <br>
-    <br>
     <p><strong>Hello ${user.firstname}</strong></p>
     <p>Someone tried to reset your password. If you are the one, please click on the link below, 
     else you can ignore this
-    message.</p>
+    message.
+    </p>
     <br/>
     <br/>
     <a href="${link}">${link}</a>

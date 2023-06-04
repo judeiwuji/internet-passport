@@ -14,8 +14,7 @@ export default function LoginNotificationMailTemplate(
   const date = moment().format('LLL');
   return `<h1 style="font-weight: 700; font-size: 1.5rem">${AppConfig.appName}</h1>
 <br>
-<br>
-<p>Hello ${user.firstname}</p>
+<p><strong>Hello ${user?.firstname},</strong></p>
 <p>
 We noticed a new login to your account using 
 ${device.client.name} on ${device.os.name} from ${ip} at ${date}
