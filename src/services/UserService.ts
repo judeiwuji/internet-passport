@@ -185,7 +185,7 @@ export default class UserService {
       where: query,
     });
     if (userSecret === null) {
-      throw new NotFoundError('No user found');
+      throw new NotFoundError('Wrong secret combinations');
     }
     return userSecret;
   }

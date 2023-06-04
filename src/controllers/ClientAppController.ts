@@ -74,7 +74,6 @@ export default class ClientAppController {
   async updateApp(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      console.log(req.body);
       const data = await validateSchema(ClientAppUpdateSchema, req.body);
       const updated = await this.clientAppService.updateApp(data, id);
       req.flash(

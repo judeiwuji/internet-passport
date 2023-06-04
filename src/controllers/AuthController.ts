@@ -372,7 +372,6 @@ export default class AuthController {
   async recoverAccountChallenge(req: IRequest, res: Response) {
     try {
       const data = await validateSchema(IdentityChallengeSchema, req.body);
-      console.log(data);
       const jwtData = JWTUtil.verify({ token: data.state });
       const user = await this.userService.findUserBy({ id: jwtData.user });
       const secret = await this.userService.findSecretBy({
@@ -382,7 +381,7 @@ export default class AuthController {
       const isMatch = await compare(data.answer, secret.answer);
 
       if (!isMatch) {
-        throw new UnknownUserError('Wrong question and answer combination');
+        throw new UnknownUserError('Wrong secret combination');
       }
       const link = this.auth.generateRecoveryLink(req, user);
       this.mailService.accountRecovery(user, link);

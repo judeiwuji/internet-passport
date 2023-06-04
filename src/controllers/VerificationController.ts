@@ -18,7 +18,6 @@ export default class VerificationController {
 
     try {
       jwtData = JWTUtil.verify({ token: state });
-      console.log(jwtData);
     } catch (error) {
       console.log(error);
       isStateValid = false;
@@ -41,7 +40,7 @@ export default class VerificationController {
     try {
       const code = parseInt(req.body['codes'].join(''));
       const jwtData = JWTUtil.verify({ token: req.body.state });
-      console.log(jwtData);
+
       // compare code
       if (code === jwtData['code']) {
         req.flash('info', 'Account verified');
