@@ -270,7 +270,7 @@ export default class AuthController {
       const jwtData = JWTUtil.verify({ token: state as string });
       const userApp = await this.userService.findAppBy({
         userId: jwtData.user,
-        id: client,
+        clientId: client,
       });
 
       // App allowed by user
